@@ -1,0 +1,76 @@
+
+{% extends 'Base/main.html' %}
+
+{% block groups %}
+
+  {% if community_list %}
+
+    {% for community in  community_list%}
+      <p>
+        <a href="{% url "community" community.id%}"> @{{community.name}} </a>
+      </p>
+      {% endfor %}  
+  {% else %}
+    <div> No communities found D: </div>
+    
+  {% endif %}
+
+{% endblock groups %}
+
+
+{% block boardheader %}
+
+<a href="{% url "createpost" %}"><div class="button" style = "width: 128px"> create post </div></a>
+
+{% endblock boardheader %}
+
+
+{% block board %}
+
+{% if post_list %}
+
+<ul>
+
+ {% for post in post_list %}
+  <div id = "post" style="overflow: hidden;">
+    {% if post.community.icon %}
+      <a href="{% url 'community' post.community.id %}">
+        <img class="icon" src="{{ post.community.icon.url }}" height="32px" style="float: left; border-radius: 50%; margin-right: 10px;">
+      </a>
+    {% else %}
+        <img src="purpledidlogo.png" height="32px" style="float: left; border-radius: 50%; margin-right: 10px;">
+    {% endif %}
+
+    <div style = "float: right; color: gray;"> {{post.pub_date}} </div>
+    <h2 style="margin-top: 0;">{{post.title}} </h2>
+    {% if post.author %}
+    <h5 style="margin-top: 0; color: gray;"> user: &nbsp; {{post.author}} </h5>
+    {% else %}
+    <h5 style="margin-top: 0; color: gray;"> user: &nbsp; [deleted] </h5>
+    {% endif %}
+    <div>
+      {{post.content}}
+      {% if  post.image %}
+        <img src="{{ post.image.url }}" >
+      {% endif %}
+    </div>
+    
+    <div style="margin-top: 25px; float: left;  margin-right: 10px; padding: 5px 10px;" class="button"> 
+      <img src="plusicon.png" height="100%" style="float: left; border-radius: 50%; margin-right: 10px;">
+      <div style="float: left; margin-top: 5px;"> 100 </div>
+    </div>
+    <a href="{% url 'post' post.id %}">
+      <div style="margin-top: 25px; float: left; margin-right: 10px; padding: 5px 10px;" class="button"> 
+        <img src="Bez commenticon.png" height="100%" style="float: left; border-radius: 50%; margin-right: 10px;">
+        <div style="float: left; margin-top: 5px;"> Comment </div>
+      </div>
+    </a>
+  </div>
+
+{% endfor %}
+  </ul>
+{% else %}
+  <p>Wow such empty :D</p>
+{% endif %}
+
+{% endblock board %}
