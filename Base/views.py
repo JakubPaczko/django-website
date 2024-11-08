@@ -17,7 +17,7 @@ def board(request):
         "community_list" : communitylist,
     }
 
-    return render(request, "Base/website_template.html", context)
+    return render(request, "website_template.html", context)
 
 def community(request, pk):
     community = Community.objects.get(pk=pk)
@@ -30,7 +30,19 @@ def community(request, pk):
 
     }
 
-    return render(request, "Base/website_template.html", context)
+    return render(request, "website_template.html", context)
+
+def user_profile(request, pk):
+    user = User.objects.get(id=str(pk))
+    user_posts = Post.objects.filter(author=user)
+    user_comments = Comment.objects.filter(user=user)
+    context = {
+        'user' : user,
+        'post_list' : user_posts,
+        'comment_list' : user_comments,
+    }
+    
+    return render(request, "user_profile_template.html", context)
 
 
 def post(request, pk):
@@ -54,7 +66,10 @@ def post(request, pk):
         "form" : form,
     }
 
-    return render(request, "Base/post_template.html", context)
+    return render(request, "post_template.html", context)
+
+def add_post_like(request, pk):
+    pass
 
 def create_post(request):
     form = PostForm()
@@ -73,7 +88,11 @@ def create_post(request):
         "form" : form
     }
 
-    return render(request, "Base/create_post.html", context)
+    return render(request, "create_post.html", context)
+
+def add_post_like(request, pk):
+    return redirect('post', pk=pk);
+
 
 def create_community(request):
     form = CommunityForm()
@@ -91,7 +110,7 @@ def create_community(request):
         "form" : form
     }
 
-    return render(request, "Base/create_post.html", context)
+    return render(request, "create_post.html", context)
 
 
 def user_register(request):
@@ -107,7 +126,7 @@ def user_register(request):
     context = {
         "form" : form
     }
-    return render(request, "Base/register_template.html", context)
+    return render(request, "register_template.html", context)
 
 def user_login(request):
     if request.method == 'POST':
@@ -131,4 +150,4 @@ def user_login(request):
 
     }
 
-    return render(request, "Base/login_template.html", context)
+    return render(request, "login_template.html", context)

@@ -1,0 +1,34 @@
+{% extends 'main.html' %}
+{% block board %}
+
+{%if user%}
+<p> {{ user.username }} </p>
+
+{% if post_list %}
+
+<ul>    
+    
+    {% for post in post_list %}
+        {% include "post_component.html" %}
+        {% endfor %}
+
+{% endif %}
+
+{% if comment_list %}
+
+<ul>    
+    
+    {% for comment in comment_list %}
+        {% include "comment_component.html" %}
+        {% endfor %}
+
+{% endif %}
+    
+{% else %}
+    <h5> no user found D: </h5>
+
+{% endif %}
+
+
+
+{% endblock board%}

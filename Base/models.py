@@ -3,7 +3,8 @@ from django.contrib.auth.models import AbstractUser
 from datetime import datetime 
 
 class User(AbstractUser):
-    pass
+    avatar = models.ImageField(blank=True, null=True, upload_to='images/user_avatars/')
+
 
 class Community(models.Model):
     admin = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -27,18 +28,19 @@ class Post(models.Model):
     likes = models.ManyToManyField(User, through="PostLike")
 
     def __str__(self):
-        return self.title[:50]
+        return self.title[0:50]
 
 class Comment(models.Model):
     content = models.CharField(max_length=1024)
     user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, default=None)
     date = models.DateTimeField()
+
     def __str__(self):
         return self.content[0:50]
  #   likes = models.ManyToMany#Field(User, through="Like")
 
 class PostLike(models.Model):
     liked_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="liked_by")
-    date_time = models.DateTimeField(auto_now_add=True)
+    date_time = models.DateTimeField(default=datetime.now())
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="liked_post")

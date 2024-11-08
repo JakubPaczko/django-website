@@ -1,0 +1,21 @@
+<div id = "comment" style="overflow: hidden;">
+    {% if user.avatar %}
+    <img src="{{ user.avatar.url }}" height="32px" style="float: left; border-radius: 50%; margin-right: 10px;">
+    {% endif %}
+
+    <div style = "float: right; color: gray;"> {{comment.date}} </div>
+    
+    {% if comment.user %}
+      <a href="{% url "user_profile" user.id %}"><h4 style="margin-top: 0; color: gray;"> user: &nbsp; {{comment.user}} </h4></a>
+    {% else %}
+      <h4 style="margin-top: 0; color: gray;"> user: &nbsp; [deleted] </h4>
+      {% endif %}
+    
+    <div>
+    {{comment.content}}
+    </div>
+    <div style="margin-top: 10px; float: left;  margin-right: 10px; padding: 5px 10px;" class="button"> 
+      <img src="plusicon.png" height="50%" style="float: left; border-radius: 50%; margin-right: 10px;">
+      <div style="float: left; margin-top: 5px;"> 0 </div>
+    </div>
+  </div>

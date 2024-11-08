@@ -8,6 +8,7 @@ from django.conf import settings
 urlpatterns = [
     path("", views.board, name = "board"),
     path("post/<str:pk>/", views.post, name="post"),
+    path("user_profile/<str:pk>/", views.user_profile, name="user_profile"),
     path("community/<str:pk>/", views.community, name="community"),
     path("createpost", views.create_post, name="createpost"),
     path("register/", views.user_register, name="user_register"),
