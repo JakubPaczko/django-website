@@ -2,7 +2,14 @@
 {% block board %}
 
 {%if user%}
-<p> {{ user.username }} </p>
+    {% if user.avatar %}
+        <img src="{{ user.avatar.url }}" />
+    {% endif %}
+
+    <p> {{ user.username }} </p>
+    <a href="{% url "user_profile_activity" user.id 'posts' %}"><p> posts  </p></a>
+    <a href="{% url "user_profile_activity" user.id 'comments' %}"><p> comments  </p></a>
+    
 
 {% if post_list %}
 

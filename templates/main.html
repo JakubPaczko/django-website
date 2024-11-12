@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+{% load static %}
+
 <html lang="en">
   <head>
     <link href='https://fonts.googleapis.com/css?family=League Spartan' rel='stylesheet'>
@@ -6,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>PurpleDid</title>
-    <link rel="stylesheet" href="./style.css">
+
     <link rel="icon" href="./favicon.ico" type="image/x-icon">
     <style>
       html,body{
@@ -60,13 +62,6 @@
       }
 
 
-      #groups{
-        background-color: rgb(29, 29, 29);
-        float: left; 
-        width: 12%;
-        padding: 5px;
-        height: 100vh;
-      }
       #friends{
         background-color: rgb(29, 29, 29);
         float: right; 
@@ -124,21 +119,21 @@
         margin-bottom: 25px;
         font-size: 15px;
       }
-      
-    </style>
 
+    </style>
+    <link rel="stylesheet" type="text/css" href="{% static 'styles/main.css' %}">
   </head>
 
   <body>
       <div class="header" style="background-color: black; color: white; margin: 0, auto; text-align: center; height: 5%;"> 
         <div style="width: 10%; height: 100%; margin: 0 auto; align-items: center; display: flex;"> 
-          <img src="purpledidlogo.png" height="100%" style="float: left;">
+          <img src="{% static 'images/purpledidlogo.png' %}" height="100%" style="float: left;">
           <h2 style="float: left; margin: 0; vertical-align: middle;">PurpleDid</h2>
-          <div style ="float: right;">
+          <div style ="clear: left; float: right;">
             {% if request.user.is_authenticated %}
-            <a href=""> logout <a>
+            <a href="{% url "user_logout" %}"> logout </a>
             {% else %}
-            <a href="{% url "user_login" %}"> login <a>
+            <a href="{% url "user_login" %}"> login </a>
             {% endif %}
             </div>
         </div>
@@ -148,7 +143,7 @@
       <hr style="margin: 0px;">
       <div id = "container">
 
-        <div id = "groups" class="scrollbox"> 
+        <div id = "groups" class="scrollbox padding_left padding_right"> 
           <p>
             <a href ="{% url "board" %}"> Home </a>
           </p>

@@ -9,6 +9,9 @@ from .models import Post, Comment, User, Community
 
 
 def board(request):
+    #zrobic lazy loading
+    #limit offset pagination
+    #django rest
     post_list = Post.objects.order_by("-pub_date")
     communitylist = Community.objects.order_by("date")
 
@@ -32,22 +35,28 @@ def community(request, pk):
 
     return render(request, "website_template.html", context)
 
-def user_profile(request, pk):
-    user = User.objects.get(id=str(pk))
+def user_profile(request, pk, user_activity="posts"):
+    user = User.objects.get(id=pk)
     user_posts = Post.objects.filter(author=user)
     user_comments = Comment.objects.filter(user=user)
     context = {
         'user' : user,
-        'post_list' : user_posts,
-        'comment_list' : user_comments,
     }
     
+    if user_activity == 'posts':
+        context['post_list'] = user_posts
+    elif user_activity == 'comments':
+        context['comment_list'] = user_comments
+
+
     return render(request, "user_profile_template.html", context)
 
 
 def post(request, pk):
     p = Post.objects.get(id=int(pk))
     comments = Comment.objects.filter(post = int(pk)).order_by("-date")
+    communitylist = Community.objects.order_by("date")
+
     form = CommentForm()
     
     if request.method == 'POST':
@@ -64,12 +73,10 @@ def post(request, pk):
         "post" : p,
         "comments" : comments,
         "form" : form,
+        "community_list" : communitylist,
     }
 
     return render(request, "post_template.html", context)
-
-def add_post_like(request, pk):
-    pass
 
 def create_post(request):
     form = PostForm()
@@ -151,3 +158,7 @@ def user_login(request):
     }
 
     return render(request, "login_template.html", context)
+
+def user_logout(request):
+    logout(request)
+    return redirect('board')

@@ -1,0 +1,75 @@
+.rounded{
+    border-radius: 25px;
+}
+
+.small_image{
+    width: 32px;
+    height: 32px;
+    max-width: 32px;
+    max-height: 32px;
+
+}
+
+.rounded{
+    border-radius: 16px;
+}
+
+
+.light_gray{
+    background-color: rgb(71, 71, 71);
+}
+
+
+.small_button{
+  width: 300px;
+  height: 32px;
+  max-width: 300px;
+  max-height: 32px;
+}
+
+.button_text{
+  line-height: 32px;
+}
+
+.padding_left{
+  padding-left: 10px;
+}
+
+.padding_right{
+  padding-right: 10px;
+}
+
+
+#groups{
+  background-color: rgb(29, 29, 29);
+  float: left; 
+  width: 12%;
+  padding: 10px;
+  height: 100vh;
+}
+
+
+
+a:link {
+  color: rgb(255, 255, 255);
+  background-color: transparent;
+  text-decoration: none;
+}
+
+a:visited {
+  color: rgb(255, 255, 255);
+  background-color: transparent;
+  text-decoration: none;
+}
+
+a:hover {
+  color: rgb(255, 255, 255);
+  background-color: transparent;
+  text-decoration: underline;
+}
+
+a:active {
+  color: rgb(255, 255, 255);
+  background-color: transparent;
+  text-decoration: underline;
+}

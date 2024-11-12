@@ -6,9 +6,7 @@
   {% if community_list %}
 
     {% for community in  community_list%}
-      <p>
-        <a href="{% url "community" community.id%}"> @{{community.name}} </a>
-      </p>
+      {% include "community_button_component.html" %}
       {% endfor %}  
   {% else %}
     <div> No communities found D: </div>

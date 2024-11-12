@@ -1,11 +1,9 @@
+{% load static %}
 
-{% block postblock %}
 <div id = "post" style="overflow: hidden;">
     {% if post.community.icon %}
         <a href="{% url 'community' post.community.id %}">
-            {% if post.community.icon %}
             <img class="icon" src="{{ post.community.icon.url }}" height="32px" style="float: left; border-radius: 50%; margin-right: 10px;">
-            {% endif %}
         </a>
     {% else %}
         <img src="purpledidlogo.png" height="32px" style="float: left; border-radius: 50%; margin-right: 10px;">
@@ -14,7 +12,9 @@
     <div style = "float: right; color: gray;"> {{post.pub_date}} </div>
     <h2 style="margin-top: 0;">{{post.title}} </h2>
     {% if post.author %}
-        <h5 style="margin-top: 0; color: gray;"> user: &nbsp; {{post.author}} </h5>
+        <a href="{% url "user_profile" post.author.id %}"> 
+            <h5 style="margin-top: 0; color: gray;"> user: &nbsp; {{post.author}} </h5> 
+        </a>
     {% else %}
         <h5 style="margin-top: 0; color: gray;"> user: &nbsp; [deleted] </h5>
     {% endif %}
@@ -28,14 +28,13 @@
     </div>
     
     <div style="margin-top: 25px; float: left;  margin-right: 10px; padding: 5px 10px;" class="button"> 
-        <img src="plusicon.png" height="100%" style="float: left; border-radius: 50%; margin-right: 10px;">
+        <img src="{% static 'images/plusicon.png' %}" height="100%" style="float: left; border-radius: 50%; margin-right: 10px;">
         <div style="float: left; margin-top: 5px;"> 100 </div>
     </div>
     <a href="{% url 'post' post.id %}">
         <div style="margin-top: 25px; float: left; margin-right: 10px; padding: 5px 10px;" class="button"> 
-        <img src="Bez commenticon.png" height="100%" style="float: left; border-radius: 50%; margin-right: 10px;">
+        <img src="{% static "images/" %}" height="100%" style="float: left; border-radius: 50%; margin-right: 10px;">
         <div style="float: left; margin-top: 5px;"> Comment </div>
         </div>
     </a>
 </div>
-{% endblock postblock %}
