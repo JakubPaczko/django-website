@@ -1,14 +1,16 @@
 {% load static %}
 
 <div id = "comment" style="overflow: hidden;">
-    {% if user.avatar %}
-    <img src="{{ user.avatar.url }}" height="32px" style="float: left; border-radius: 50%; margin-right: 10px;">
+    {% if comment.user.avatar %}
+      <img src="{{ comment.user.avatar.url }}" class="small_image rounded" style="float: left; margin-right: 10px;">
+    {% else %}
+      <img class="float_left small_image rounded" style="float: left; margin-right: 10px;" src="{% static "images/default_avatar.png" %}" />
     {% endif %}
 
     <div style = "float: right; color: gray;"> {{comment.date}} </div>
     
     {% if comment.user %}
-      <a href="{% url "user_profile" user.id %}"><h4 style="margin-top: 0; color: gray;"> user: &nbsp; {{comment.user}} </h4></a>
+      <a href="{% url "user_profile" comment.user.id %}"><h4 style="margin-top: 0; color: gray;"> user: &nbsp; {{comment.user}} </h4></a>
     {% else %}
       <h4 style="margin-top: 0; color: gray;"> user: &nbsp; [deleted] </h4>
       {% endif %}

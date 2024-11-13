@@ -72,3 +72,10 @@
 {% endif %}
 
 {% endblock board %}
+
+{% block friends %}
+  {% for friend in friend_list %}
+    {% include "user_button_component.html" %}
+
+  {% endfor %}
+{% endblock friends %}

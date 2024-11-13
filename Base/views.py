@@ -14,12 +14,17 @@ def board(request):
     #django rest
     post_list = Post.objects.order_by("-pub_date")
     communitylist = Community.objects.order_by("date")
+    
 
     context = {
         "post_list" : post_list,
         "community_list" : communitylist,
     }
 
+    user = request.user
+    if user:
+        context["friend_list"] = user.following.all()
+    
     return render(request, "website_template.html", context)
 
 def community(request, pk):
@@ -34,6 +39,19 @@ def community(request, pk):
     }
 
     return render(request, "website_template.html", context)
+
+def follow_user(request, pk):
+    user = request.user
+    follow_user = User.objects.get(pk=pk)
+    followers = user.following.all()
+
+    if user != follow_user:
+        if follow_user in followers:
+            user.following.remove(follow_user)
+        else:
+            user.following.add(follow_user)
+
+    return redirect('user_profile', pk=pk)
 
 def user_profile(request, pk, user_activity="posts"):
     user = User.objects.get(id=pk)

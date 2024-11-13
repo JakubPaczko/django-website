@@ -1,6 +1,3 @@
-.rounded{
-    border-radius: 25px;
-}
 
 .small_image{
     width: 32px;
@@ -39,6 +36,26 @@
   padding-right: 10px;
 }
 
+.center_text{
+  text-align: center;
+}
+
+.float_left{
+  float: left;
+}
+
+.margin_small{
+  margin: 10px 10px;
+}
+
+.medium_image{
+  width: 128px;
+  height: 128px;
+}
+
+hr{
+  border: 1px solid rgb(71, 71, 71);
+}
 
 #groups{
   background-color: rgb(29, 29, 29);
@@ -47,6 +64,7 @@
   padding: 10px;
   height: 100vh;
 }
+
 
 
 

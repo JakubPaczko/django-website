@@ -4,6 +4,9 @@ from datetime import datetime
 
 class User(AbstractUser):
     avatar = models.ImageField(blank=True, null=True, upload_to='images/user_avatars/')
+    following = models.ManyToManyField(
+        "self", blank=True, related_name="followers", symmetrical=False
+    )
 
 
 class Community(models.Model):
