@@ -8,6 +8,7 @@ from django.conf import settings
 urlpatterns = [
     path("", views.board, name = "board"),
     path("post/<str:pk>/", views.post, name="post"),
+    path("like_post/<str:pk>/", views.like_post, name="like_post"),
     path("user/<str:pk>", views.user_profile, name="user_profile"),
     path("user/<str:pk>/<str:user_activity>", views.user_profile, name="user_profile_activity"),
     path("follow/<str:pk>", views.follow_user, name="follow_user"),

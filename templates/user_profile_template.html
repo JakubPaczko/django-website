@@ -15,9 +15,15 @@
     {% if request.user.is_authenticated %}
     <a href='{% url "follow_user" user.id %}' class="float_left margin_small" style="clear: both">
         <div class="light_gray rounded small_button" style="clear: both; margin-top: 10px"> 
-            <div style="float: left; overflow: hidden; margin-left: 10px" class="button_text" > Follow User </div>
-        </div>
-    </a>
+            <div style="float: left; overflow: hidden; margin-left: 10px" class="button_text" > 
+                    {% if is_followed %}
+                    Unfollow User
+                    {% else %}
+                    Follow User
+                    {% endif %}
+                </div>
+            </div>
+        </a>
     {% endif %}
 
 

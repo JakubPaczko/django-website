@@ -23,15 +23,19 @@ class Community(models.Model):
 
 class Post(models.Model):
     title = models.CharField(max_length=256, blank=False, default="Title")
-    content = models.CharField(max_length=1024, blank=False, default="Content")
+    content = models.CharField(max_length=1024, blank=False)
     author = models.ForeignKey(User, null=True, on_delete=models.SET_DEFAULT, default=None, related_name="post_author")
     pub_date = models.DateTimeField(default=datetime.now(), blank=True)
     image = models.ImageField(blank=True, null=True, upload_to='images/')
     community = models.ForeignKey(Community, on_delete=models.CASCADE, default=None)
-    likes = models.ManyToManyField(User, through="PostLike")
 
     def __str__(self):
         return self.title[0:50]
+    
+    def get_like_count(pk=0) -> int:
+        post = Post.objects.get(pk=pk)
+        return 5
+        # return PostLike.objects.filter(post=post)
 
 class Comment(models.Model):
     content = models.CharField(max_length=1024)
@@ -44,6 +48,13 @@ class Comment(models.Model):
  #   likes = models.ManyToMany#Field(User, through="Like")
 
 class PostLike(models.Model):
-    liked_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="liked_by")
-    date_time = models.DateTimeField(default=datetime.now())
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="liked_by")
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="liked_post")
+    date_time = models.DateTimeField(default=datetime.now())
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'post'], name="unique_like"),
+        ]
+    def __str__(self):
+        return f"@{self.user.username[0: 20]} liked: {self.post.title[0:20]}"
