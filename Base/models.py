@@ -32,16 +32,22 @@ class Post(models.Model):
     def __str__(self):
         return self.title[0:50]
     
-    def get_like_count(pk=0) -> int:
-        post = Post.objects.get(pk=pk)
-        return 5
+    @property
+    def get_like_count(self):
+        likes = PostLike.objects.filter(post=self)
+        return likes.count()
+
+    @property
+    def get_comment_count(self):
+        comments = Comment.objects.filter(post=self)
+        return comments.count()
         # return PostLike.objects.filter(post=post)
 
 class Comment(models.Model):
     content = models.CharField(max_length=1024)
     user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, default=None)
-    date = models.DateTimeField()
+    date = models.DateTimeField(default=datetime.now())
 
     def __str__(self):
         return self.content[0:50]

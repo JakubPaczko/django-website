@@ -90,9 +90,6 @@ def post(request, pk):
     p = Post.objects.get(id=int(pk))
     comments = Comment.objects.filter(post = int(pk)).order_by("-date")
     communitylist = Community.objects.order_by("date")
-    likes = get_object_or_404(
-        PostLike.objects.annotate()
-    )
     form = CommentForm()
     
     if request.method == 'POST':

@@ -32,14 +32,14 @@
     <a href="{% url 'like_post' post.id %}">
         <div style="margin-top: 25px; float: left;  margin-right: 10px; padding: 5px 10px;" class="button"> 
             {% comment %} <img src="{% static 'images/plusicon.png' %}" height="100%" style="float: left; border-radius: 50%; margin-right: 10px;"> {% endcomment %}
-            <div style="float: left; margin-top: 5px;"> +  </div>
+            <div style="float: left; margin-top: 5px;"> + {{ post.get_like_count }} </div>
         </div>
     </a>
 
     <a href="{% url 'post' post.id %}">
         <div style="margin-top: 25px; float: left; margin-right: 10px; padding: 5px 10px;" class="button"> 
-        <img src="{% static "images/" %}" height="100%" style="float: left; border-radius: 50%; margin-right: 10px;">
-        <div style="float: left; margin-top: 5px;"> Comment </div>
+        <img src="{% static "images/commenticon.png" %}" height="100%" style="float: left; border-radius: 50%; margin-right: 10px;">
+        <div style="float: left; margin-top: 5px;"> {{ post.get_comment_count }} </div>
         </div>
     </a>
 </div>
