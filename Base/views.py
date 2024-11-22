@@ -3,27 +3,36 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from datetime import datetime
 from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import get_object_or_404
-from .forms import CommentForm, PostForm, RegisterForm, CommunityForm
-from .models import Post, Comment, User, Community, PostLike
+from Base.forms import CommentForm, PostForm, RegisterForm, CommunityForm
+from Base.models import Post, Comment, User, Community, PostLike
+from rest_framework import viewsets
+from Base.serlializers import PostSerializer
+
+class PostViewSet(viewsets.ModelViewSet):
+    #
+    queryset = Post.objects.all().order_by('-pub_date')
+    serializer_class = PostSerializer
 
 
 def board(request):
     #zrobic lazy loading
     #limit offset pagination
     #django rest
-    post_list = Post.objects.order_by("-pub_date")
-    communitylist = Community.objects.order_by("date")
-    
 
-    context = {
-        "post_list" : post_list,
-        "community_list" : communitylist,
-    }
+    #wypierdolic to
+    # post_list = Post.objects.order_by("-pub_date")
+    # communitylist = Community.objects.order_by("date")
+    # #----
+    context = {}
+    # context = {
+    #     "post_list" : post_list,
+    #     "community_list" : communitylist,
+    # }
 
     if request.user.is_authenticated:
         context["friend_list"] = request.user.following.all()
     
+
     return render(request, "website_template.html", context)
 
 def community(request, pk):

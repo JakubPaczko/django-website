@@ -4,6 +4,11 @@ from django.http import HttpResponse
 from . import views
 from django.conf.urls.static import static
 from django.conf import settings
+from Base.views import PostViewSet
+from rest_framework import routers
+
+router = routers.DefaultRouter()
+router.register(r'posts', PostViewSet)
 
 urlpatterns = [
     path("", views.board, name = "board"),
@@ -17,8 +22,5 @@ urlpatterns = [
     path("register/", views.user_register, name="user_register"),
     path("login/", views.user_login, name="user_login"),
     path("create_community/", views.create_community, name="create_community"),
-    path("logout/", views.user_logout, name="user_logout")
-
-
-
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path("logout/", views.user_logout, name="user_logout"),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + router.urls

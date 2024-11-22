@@ -53,6 +53,18 @@
   height: 128px;
 }
 
+.hidden{
+  opacity: 0;
+  display: none;
+  transition: opacity 1s;
+}
+
+.visible{
+  opacity: 1;
+  display: inline;
+  transition: opacity 1s;
+}
+
 hr{
   border: 1px solid rgb(71, 71, 71);
 }

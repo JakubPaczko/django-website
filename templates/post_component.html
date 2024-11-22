@@ -1,6 +1,6 @@
 {% load static %}
 
-<div id = "post" style="overflow: hidden;">
+<div id = "post" style="overflow: hidden;" class="post hidden">
     {% if post.community.icon %}
         <a href="{% url 'community' post.community.id %}">
             <img class="icon" src="{{ post.community.icon.url }}" height="32px" style="float: left; border-radius: 50%; margin-right: 10px; margin-bottom: 10px;">

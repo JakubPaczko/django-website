@@ -10,6 +10,8 @@
     <title>PurpleDid</title>
 
     <link rel="icon" href="./favicon.ico" type="image/x-icon">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="{% static "script/main.js" %}"></script>
     <style>
       html,body{
         min-height: 100% !important;
@@ -180,6 +182,9 @@
         </div>
 
         <div id = "board" class="scrollbox">
+          
+          <button class='click'> sex </button>
+          
           {% block board %}
           
           {% endblock board%}
@@ -188,6 +193,5 @@
 
       </div>
         
-    <script src="index.js"></script>
   </body>
 </html>
