@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from Base.models import Post, User, Community
+from Base.models import Post, User, Community, Comment
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -15,6 +15,13 @@ class CommunitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Community
         fields = ['id', 'name', 'icon', 'description', 'date']
+
+class CommentSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+    class Meta:
+        model = Comment
+        fields = ['id', 'user', 'content', 'post']
+
 
 class PostSerializer(serializers.ModelSerializer):
     author = UserSerializer()

@@ -7,12 +7,20 @@ from Base.forms import CommentForm, PostForm, RegisterForm, CommunityForm
 from Base.models import Post, Comment, User, Community, PostLike
 from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from Base.serlializers import PostSerializer, CommunitySerializer, UserSerializer
+from Base.serlializers import PostSerializer, CommunitySerializer, UserSerializer, CommentSerializer
+from rest_framework.response import Response
+
 
 class PostViewSet(viewsets.ModelViewSet):
     #
     queryset = Post.objects.all().order_by('-pub_date')
     serializer_class = PostSerializer
+
+    def date_list(self, request, pk=None):
+        post = self.get_object() # retrieve an object by pk provided
+        comments = Comment.objects.filter(post=post).distinct()
+        comments_json = CommentSerializer(comments, many=True)
+        return Response(comments_json.data)
 
 class CommunityViewSet(viewsets.ModelViewSet):
     queryset = Community.objects.all()
@@ -26,6 +34,15 @@ class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
+
+class CommentsViewSet(generics.CreateAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+
+    def get(self, request, *args, **kwargs):
+        secrets = Comment.objects.filter(post=kwargs['post_id'])
+        return Response(CommentSerializer(secrets, many=True).data)
+        # return secrets
 
 
 def board(request):

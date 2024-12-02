@@ -1,6 +1,6 @@
 import React, { createRef, useEffect, useState } from 'react';
 import './main.css'
-import {PostList, LoadPosts , Post}from './post'
+import {PostList, LoadPosts , Post, CommentList}from './post'
 import axios from 'axios';
 import {Routes, Route, useParams} from 'react-router-dom'
 
@@ -78,6 +78,8 @@ class Board extends React.Component{
 
 function PostDetails(){
     const [details, setDetails] = useState({});
+    const [comments, setComments] = useState({});
+    const [commentsLoading, setCommentsLoading] = useState(true);
     const [loading, setLoading] = useState(true);
 
     const { postid } = useParams();
@@ -94,30 +96,35 @@ function PostDetails(){
             }).catch(err => {
                 setLoading(false)
             })
+        axios.get('http://127.0.0.1:8000/post_comments/' + postid + '/').then(res => {
+            // setDetails(res.data)
+            setComments(res.data);
+                setTimeout(() => {
+                    setCommentsLoading(false)
+                    }, 100);
+
+            }).catch(err => {
+                setCommentsLoading(false)
+            })
     }, []);
 
-    if(loading){
-        return(
-            <div id = "board" className="scrollbox" >
-                <img src={process.env.PUBLIC_URL + "/loading.gif"} style={{float: 'center', margin: '0 auto'}} ></img>
-            </div>
-        )
-    }
-    else{
-        return(
-            <div id = "board" className="scrollbox" >
-                <a href="/">
-                    <div  className="button" style={{marginTop: '25px', marginRight: '10px', padding: '5px 10px', lineHeight: '25px', width: '100px'}}>
-                        <div style={{height: '100%', float: 'left', paddingRight: '5px'}}>
-                            <img src={process.env.PUBLIC_URL + "/arrow-sm-left-svgrepo-com.svg"} style={{height: '100%'}}></img>
-                        </div>
-                        <div style={{overflow: 'hidden'}}> return </div>
+
+    return(
+        <div id = "board" className="scrollbox" >
+            <a href="/">
+                <div  className="button" style={{marginTop: '25px', marginRight: '10px', padding: '5px 10px', lineHeight: '25px', width: '100px'}}>
+                    <div style={{height: '100%', float: 'left', paddingRight: '5px'}}>
+                        <img src={process.env.PUBLIC_URL + "/arrow-sm-left-svgrepo-com.svg"} style={{height: '100%'}}></img>
                     </div>
-                </a>
-                <Post data={details}/>
-            </div>
-        );
-    }
+                    <div style={{overflow: 'hidden'}}> return </div>
+                </div>
+            </a>
+            
+            {loading ? <div>loading</div> : <Post data={details}/> }
+            {commentsLoading ? <div>loading comments</div> : <CommentList data={comments}/> }
+
+        </div>
+    )
 }
 // class CommunityList extends React.Component(){
 
