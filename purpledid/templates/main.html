@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="en">
+  <head>
+    <link href='https://fonts.googleapis.com/css?family=League Spartan' rel='stylesheet'>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>PurpleDid</title>
+
+    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="{% static "script/main.js" %}"></script>
+    <style>
+      html,body{
+        min-height: 100% !important;
+        width: 100%;
+        height: 100%;
+        margin: 0; /* Space from this element (entire page) and others*/
+        padding: 0; /*space from content and border*/
+        overflow:hidden;
+        display:block;
+      }
+      body {
+        font-family: 'League Spartan';font-size: 22px;
+      }
+      #container{
+        background-color: black;
+        clear: both;
+        width: 100%;
+
+      }
+      #board{
+        /* overflow: auto; */
+        background-color: rgb(0, 0, 0); 
+        color: white;
+        float: center ; 
+        width: 40%; 
+        margin: 0px auto; 
+        height: 90vh;
+      }
+      #boardheader{
+        /* overflow: auto; */
+        background-color: rgb(0, 0, 0); 
+        color: white;
+        float: center ; 
+        width: 40%; 
+        margin: 0px auto; 
+        height: 5vh;
+      }
+
+      .scrollbox{
+        overflow-y: scroll; 
+        scrollbar-color: rgb(0, 0, 0) #000000;
+        scrollbar-width: thin;
+        transition: scrollbar-color 0.2s;
+        
+      }
+      .scrollbox:hover{
+        scrollbar-color: rgb(75, 75, 75) #000000;
+        scrollbar-highlight-color: #a5a5a5;
+        transition: scrollbar-color 0.2s;
+      }
+
+
+      #friends{
+        background-color: rgb(29, 29, 29);
+        float: right; 
+        width: 8%;
+        padding-left: 2%;
+        padding-right: 2%;
+        height: 100vh;
+        
+      }
+
+      .button{
+        border-radius: 25px;
+        height: 25px;
+        background-color: rgb(75, 75, 75);
+      }
+      
+      .button:hover{
+        background-color: gray;
+      }
+
+      .friendbox{
+        border-radius: 25px;
+        height: 25px;
+        background-color: rgb(75, 75, 75);
+        align-items: center;
+        vertical-align: middle;
+        padding: 5px;
+        margin: 5px;
+        line-height: 100%;
+      }
+      .friendbox:hover{
+        background-color: gray;
+      }
+
+      .icon{
+        width: 32px;
+        height: 32px;
+        overflow: hidden;
+      }
+
+      #post{
+        border-radius: 25px;
+        background-color: rgb(29, 29, 29);
+        padding: 25px;
+        margin-bottom: 25px;
+      }
+
+      #comment{
+        border-radius: 25px;
+        background-color: rgb(29, 29, 29);
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-left: 25px;
+        padding-right: 25px;
+        margin-bottom: 25px;
+        font-size: 15px;
+      }
+
+    </style>
+    <link rel="stylesheet" type="text/css" href="{% static 'styles/main.css' %}">
+  </head>
+
+  <body>
+      <div class="header" style="background-color: black; color: white; height: 5%;"> 
+        <div style="width: 20%; height: 100%; float: left">
+
+          <img src="{% static 'images/purpledidlogo.png' %}" height="80%" style="float: left" >
+          <h2 style="float: left; margin: 0; line-height: 64px">PurpleDid</h2>
+        </div>
+          
+          <div style ="float: right;">
+            {% if request.user.is_authenticated %}
+            <a href="{% url "user_logout" %}"> logout </a>
+            {% else %}
+            <a href="{% url "user_login" %}"> login </a>
+            {% endif %}
+          </div> 
+
+
+      </div>
+      <hr style="margin: 0px;">
+      <div id = "container">
+
+        <div id = "groups" class="scrollbox padding_left padding_right"> 
+          <p>
+            <a href ="{% url "board" %}"> Home </a>
+          </p>
+          <p>
+          </p>
+            <a href =""> Popular </a>
+          <p>
+            <a href ="{% url "create_community" %}"> create community </a>
+          </p>
+          <hr style="margin: 0px;">
+  
+          {% block groups %}
+          {% endblock groups%}
+        </div>
+        <!--  -->
+
+        <!--  -->
+        
+
+        
+        <div id = "friends" class="scrollbox"> 
+          {% block friends %}
+          
+          {% endblock friends%}
+        </div>
+
+        <div id = "boardheader">
+
+
+          {% block boardheader %}
+          {% endblock boardheader %}
+        </div>
+
+        <div id = "board" class="scrollbox">
+          
+          <button class='click'> sex </button>
+          
+          {% block board %}
+          
+          {% endblock board%}
+
+        </div>
+
+      </div>
+        
+  </body>
+</html>

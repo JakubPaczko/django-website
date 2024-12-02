@@ -1,0 +1,25 @@
+{% load static %}
+
+<div id = "comment" style="overflow: hidden;">
+    {% if comment.user.avatar %}
+      <img src="{{ comment.user.avatar.url }}" class="small_image rounded" style="float: left; margin-right: 10px;">
+    {% else %}
+      <img class="float_left small_image rounded" style="float: left; margin-right: 10px;" src="{% static "images/default_avatar.png" %}" />
+    {% endif %}
+
+    <div style = "float: right; color: gray;"> {{comment.date}} </div>
+    
+    {% if comment.user %}
+      <a href="{% url "user_profile" comment.user.id %}"><h4 style="margin-top: 0; color: gray;"> user: &nbsp; {{comment.user}} </h4></a>
+    {% else %}
+      <h4 style="margin-top: 0; color: gray;"> user: &nbsp; [deleted] </h4>
+      {% endif %}
+    
+    <div>
+    {{comment.content}}
+    </div>
+    <div style="margin-top: 10px; float: left;  margin-right: 10px; padding: 5px 10px;" class="button"> 
+      {% comment %} <img src="{% static "images/plusicon.png" %}" height="50%" style="float: left; border-radius: 50%; margin-right: 10px;"> {% endcomment %}
+      <div style="float: left; margin-top: 5px;"> + 0 </div>
+    </div>
+  </div>

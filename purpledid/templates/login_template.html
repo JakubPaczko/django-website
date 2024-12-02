@@ -1,0 +1,24 @@
+
+{% extends 'main.html' %}
+
+{% block board %}
+
+<div id = "post" style="overflow: hidden;">
+    <form method="POST" action="" novalidate> 
+        {% csrf_token %}
+
+        <label> username </label>
+        <input type="text" name = "username"  />
+        
+        <label> password </label>
+        <input type="password" name = "password"  />
+
+
+        <input type="Submit" value = "Login"/>
+    </form>
+<div>
+<p> dont have account?? 
+    <a href ="{% url "user_register" %}"> register! </>
+</p>
+
+{% endblock board%}

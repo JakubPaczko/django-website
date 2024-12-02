@@ -1,0 +1,15 @@
+{% extends 'main.html' %}
+
+{% block board %}
+{% if request.user.is_authenticated %}
+<div id = "post" style="overflow: hidden;">
+    <form method="POST" action="" novalidate enctype="multipart/form-data"> 
+        {% csrf_token %}
+        {{form.as_p}}
+        <input type="Submit" value = "Submit"/>
+    </form>
+<div>
+{% else %}
+<h1> login to create post </h1>
+{% endif %}
+{% endblock board%}

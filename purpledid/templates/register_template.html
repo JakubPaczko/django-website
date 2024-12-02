@@ -1,0 +1,14 @@
+
+{% extends 'main.html' %}
+
+{% block board %}
+
+<div id = "post" style="overflow: hidden;">
+    <form method="POST" action="" novalidate> 
+        {% csrf_token %}
+        {{form.as_p}}
+        <input type="Submit" value = "Submit"/>
+    </form>
+<div>
+
+{% endblock board%}

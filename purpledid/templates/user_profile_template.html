@@ -1,0 +1,75 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block board %}
+
+{%if user%}
+    {% if user.avatar %}
+        <img class="float_left medium_image" src="{{ user.avatar.url }}" />
+    {% else %}
+        <img class="float_left medium_image" src="{% static "images/default_avatar.png" %}" />
+
+    {% endif %}
+
+    <div class="float_left margin_small"> @ {{ user.username }} </div>
+    
+    {% if request.user.is_authenticated %}
+    <a href='{% url "follow_user" user.id %}' class="float_left margin_small" style="clear: both">
+        <div class="light_gray rounded small_button" style="clear: both; margin-top: 10px"> 
+            <div style="float: left; overflow: hidden; margin-left: 10px" class="button_text" > 
+                    {% if is_followed %}
+                    Unfollow User
+                    {% else %}
+                    Follow User
+                    {% endif %}
+                </div>
+            </div>
+        </a>
+    {% endif %}
+
+
+    <a href='{% url "user_profile_activity" user.id 'posts' %}' class="float_left margin_small" style="clear: both">
+        <div class="light_gray rounded small_button" style="clear: both; margin-top: 10px"> 
+            <div style="float: left; overflow: hidden; margin-left: 10px" class="button_text" > posts </div>
+        </div>
+    </a>
+    <a href='{% url "user_profile_activity" user.id 'comments' %}' class="float_left margin_small">
+        <div class="light_gray rounded small_button center_text" style="clear: both; margin-top: 10px"> 
+            <div style="float: left; overflow: hidden; margin-left: 10px" class="button_text" > comments </div>
+        </div>
+    </a>
+    {% comment %} <a href="{% url "user_profile_activity" user.id 'posts' %}"><p> posts  </p></a> {% endcomment %}
+    {% comment %} <a href="{% url "user_profile_activity" user.id 'comments' %}"><p> comments  </p></a> {% endcomment %}
+    
+    <hr style="clear: both">
+
+{% if post_list %}
+    
+    {% for post in post_list %}
+        {% include "post_component.html" %}
+        {% endfor %}
+
+{% endif %}
+
+{% if comment_list %}
+
+<ul>    
+    
+    {% for comment in comment_list %}
+        {% include "comment_component.html" %}
+        {% endfor %}
+
+{% endif %}
+    
+{% else %}
+    <h5> no user found D: </h5>
+
+{% endif %}
+
+{% endblock board%}
+
+{% block friends %}
+  {% for friend in friend_list %}
+    {% include "user_button_component.html" %}
+
+  {% endfor %}
+{% endblock friends %}
