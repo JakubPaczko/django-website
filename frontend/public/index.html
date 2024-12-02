@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/purpledidlogo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="Web site created using create-react-app"
+    />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="stylesheet" href="%PUBLIC_URL%/main.css" />
+    <!--
+      manifest.json provides metadata used when your web app is installed on a
+      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+    -->
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <!--
+      Notice the use of %PUBLIC_URL% in the tags above.
+      It will be replaced with the URL of the `public` folder during the build.
+      Only files inside the `public` folder can be referenced from the HTML.
+
+      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
+      work correctly both with client-side routing and a non-root public URL.
+      Learn how to configure a non-root public URL by running `npm run build`.
+    -->
+    <title>PurpleDid</title>
+    <style>
+      html,body{
+        min-height: 100% !important;
+        width: 100%;
+        margin: 0; /* Space from this element (entire page) and others*/
+        padding: 0; /*space from content and border*/
+        overflow:hidden;
+        display:block;
+      }
+      body {
+        font-family: 'League Spartan';font-size: 22px;
+      }
+      #container{
+        background-color: black;
+        clear: both;
+        width: 100%;
+
+      }
+      #board{
+        /* overflow: auto; */
+        background-color: rgb(0, 0, 0); 
+        color: white;
+        float: center ; 
+        width: 40%; 
+        margin: 0px auto; 
+        height: 90vh;
+      }
+      #boardheader{
+        /* overflow: auto; */
+        background-color: rgb(0, 0, 0); 
+        color: white;
+        float: center ; 
+        width: 40%; 
+        margin: 0px auto; 
+        height: 5vh;
+      }
+
+      .scrollbox{
+        overflow-y: scroll; 
+        scrollbar-color: rgb(0, 0, 0) #000000;
+        scrollbar-width: thin;
+        transition: scrollbar-color 0.2s;
+        
+      }
+      .scrollbox:hover{
+        scrollbar-color: rgb(75, 75, 75) #000000;
+        scrollbar-highlight-color: #a5a5a5;
+        transition: scrollbar-color 0.2s;
+      }
+
+
+      #friends{
+        background-color: rgb(29, 29, 29);
+        float: right; 
+        width: 8%;
+        padding-left: 2%;
+        padding-right: 2%;
+        height: 100vh;
+        
+      }
+
+
+      
+      .button:hover{
+        background-color: gray;
+      }
+
+      .friendbox{
+        border-radius: 25px;
+        height: 25px;
+        background-color: rgb(75, 75, 75);
+        align-items: center;
+        vertical-align: middle;
+        padding: 5px;
+        margin: 5px;
+        line-height: 100%;
+      }
+      .friendbox:hover{
+        background-color: gray;
+      }
+
+      .icon{
+        width: 32px;
+        height: 32px;
+        overflow: hidden;
+      }
+
+
+
+      #comment{
+        border-radius: 25px;
+        background-color: rgb(29, 29, 29);
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-left: 25px;
+        padding-right: 25px;
+        margin-bottom: 25px;
+        font-size: 15px;
+      }
+
+    </style>
+  </head>
+  <body>
+    <noscript>Please enable javascript</noscript>
+    <div id="root">
+
+    </div>
+    
+
+  </body>
+</html>
