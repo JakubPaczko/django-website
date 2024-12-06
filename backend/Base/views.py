@@ -10,21 +10,30 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from Base.serlializers import PostSerializer, CommunitySerializer, UserSerializer, CommentSerializer
 from rest_framework.response import Response
 
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        token['username'] = user.username
+
+        return token
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
+
 
 class PostViewSet(viewsets.ModelViewSet):
     #
-    queryset = Post.objects.all().order_by('-pub_date')
     serializer_class = PostSerializer
-
-    def date_list(self, request, pk=None):
-        post = self.get_object() # retrieve an object by pk provided
-        comments = Comment.objects.filter(post=post).distinct()
-        comments_json = CommentSerializer(comments, many=True)
-        return Response(comments_json.data)
+    queryset = Post.objects.all().order_by('-pub_date')
 
 class CommunityViewSet(viewsets.ModelViewSet):
-    queryset = Community.objects.all()
     serializer_class = CommunitySerializer
+    queryset = Community.objects.all().order_by('date')
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -35,25 +44,21 @@ class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
 
-class CommentsViewSet(generics.CreateAPIView):
-    queryset = Comment.objects.all()
+class CommentsViewSet(generics.ListAPIView):
     serializer_class = CommentSerializer
 
-    def get(self, request, *args, **kwargs):
-        secrets = Comment.objects.filter(post=kwargs['post_id'])
-        return Response(CommentSerializer(secrets, many=True).data)
-        # return secrets
+    def get_queryset(self):
+        post = self.kwargs['post_id']
+        return Comment.objects.filter(post=post)
 
+class CommunityPostsViewSet(generics.ListAPIView):
+    serializer_class = PostSerializer
+
+    def get_queryset(self):
+        community = self.kwargs['community_id']
+        return Post.objects.filter(community=community)
 
 def board(request):
-    #zrobic lazy loading
-    #limit offset pagination
-    #django rest
-
-    #wypierdolic to
-    # post_list = Post.objects.order_by("-pub_date")
-    # communitylist = Community.objects.order_by("date")
-    # #----
     context = {}
     # context = {
     #     "post_list" : post_list,

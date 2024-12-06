@@ -4,17 +4,26 @@ from django.http import HttpResponse
 from Base import views
 from django.conf.urls.static import static
 from django.conf import settings
-from Base.views import PostViewSet, CommunityViewSet, UserViewSet, CreateUserView, CommentsViewSet
+from Base.views import PostViewSet, CommunityViewSet, UserViewSet, CreateUserView, CommentsViewSet, CommunityPostsViewSet, MyTokenObtainPairView
 from rest_framework import routers
+
+
+from rest_framework_simplejwt.views import (
+    TokenRefreshView,
+)
 
 router = routers.DefaultRouter()
 router.register(r'posts', PostViewSet)
 router.register(r'communitys', CommunityViewSet)
 router.register(r'users', UserViewSet)
+# router.register(r'post_comments', CommentsViewSet)
 # router.register(r'comments', CommentViewSet)
 
 
 urlpatterns = [
+    path('api/token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+
     path("", views.board, name = "board"),
     path("post/<str:pk>/", views.post, name="post"),
     path("like_post/<str:pk>/", views.like_post, name="like_post"),
@@ -27,7 +36,8 @@ urlpatterns = [
     path("login/", views.user_login, name="user_login"),
     path("create_community/", views.create_community, name="create_community"),
     path("logout/", views.user_logout, name="user_logout"),
-    path('api/create/', CreateUserView.as_view()),
-    path('post_comments/<str:post_id>/', CommentsViewSet.as_view())
 
+    path('api/create/', CreateUserView.as_view()),
+    path('post_comments/<str:post_id>/', CommentsViewSet.as_view()),
+    path('community_posts/<str:community_id>/', CommunityPostsViewSet.as_view()),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + router.urls
