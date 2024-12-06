@@ -1,8 +1,9 @@
 import React, { createRef, useEffect, useState } from 'react';
 import './main.css'
-import {PostList, LoadPosts , Post, CommentList}from './post'
+import {PostList, Post, CommentList}from './post'
+import { CommunityList } from './community';
 import axios from 'axios';
-import {Routes, Route, useParams} from 'react-router-dom'
+import {Routes, Route, useParams, Form} from 'react-router-dom'
 
 
 
@@ -29,19 +30,10 @@ class Board extends React.Component{
 
         const scrollb = this.scrollbox.current
         const scroll_val = window.sessionStorage.getItem("scroll")
-        // scrollb.scrollTop = scroll_val
-        // scrollb.scrollTop = scroll_val;
-        // console.log('scrolled')
-        // scrollb.scrollTo({ top: scroll_val, behavior: 'smooth' });
-        // console.log(scroll_val)
-        // scrollb.scrollTop = scroll_val;
+
         setTimeout(() => {
             scrollb.scrollTo({ top: scroll_val, behavior: "smooth" });
-            // scrollb.scrollTo(0, scroll_val); // Przewinięcie strony do zapisanej pozycji
           }, 100);
-        // console.log(scrollb)
-        // console.log(scrollb)
-
     }
 
     handleScroll = (e) => {
@@ -62,27 +54,123 @@ class Board extends React.Component{
             .catch(err => {
 
             })
-            // console.log(this.state.details)
         }
     }
 
     render(){
         return(
             <div id = "board" className="scrollbox" ref={this.scrollbox} onScroll={this.handleScroll}>
-                <LoadPosts data={this.state.details}/>
+                <PostList data={this.state.details}/>
             </div>
         )
     }
 }
 
+function CommunityBoard(){
+    const [posts, setPosts] = useState({});
+    const [loadingPosts, setLoadingPosts] = useState(true);
+    const {communityid} = useParams();
+    const [nextPosts] = useState('');
+
+    useEffect(() => {
+        setLoadingPosts(true)
+
+        axios.get('http://127.0.0.1:8000/community_posts/' + communityid +'/?limit=5').then(res => {
+
+                setPosts(res.data.results);
+                
+                nextPosts = res.data.next;
+                console.log(nextPosts);
+
+                setLoadingPosts(false)
+
+            }).catch(err => {
+                setLoadingPosts(false)
+            })
+    }, [communityid]);
+
+    const handleScroll = (e) => {
+        const { scrollTop, scrollHeight, clientHeight } = e.target;
+
+        if( scrollTop === (scrollHeight - clientHeight)) {
+            let data;
+            if (nextPosts == '') return;
+            
+            axios.get(nextPosts).then(res => {
+                data = res.data.results;
+                nextPosts = res.data.next;
+                setPosts({details: [...posts, ...data]})
+
+            })
+            .catch(err => {
+
+            })
+        }
+    }
+
+    return(
+        <div id = "board" className="scrollbox" onScroll={ handleScroll }>
+            {loadingPosts ? <div> loading </div> : <PostList data={posts}/>}
+        </div>
+    )
+}
+
+function LoginPage(){
+    return (
+        <div id='board' style={{textAlign: 'center'}}>
+            <h1> Login </h1>
+            <form>
+                <p>
+                    <input type='text' name='username' placeholder='Enter username'/>
+                </p>
+                <p>
+                    <input type='password' name='password' placeholder='Enter password'/>
+                </p>
+                <p>
+                    <input type='submit'/>
+                </p>
+            </form>
+        </div>
+    )
+}
+
+class Communities extends React.Component{
+    state = {
+        details : [],
+        is_loading : true,
+    };
+    componentDidMount(){
+        let data;
+        axios.get('http://127.0.0.1:8000/communitys/').then(res => {
+        data = res.data;
+        this.setState( { details: data } );
+        this.setState( {is_loading: false} )
+        }).catch(err => {
+
+        })
+
+    }
+
+    render(){
+        console.log(this.state.details)
+        return(
+            <div>
+                {
+                    this.state.is_loading ? <div> loading </div> : <CommunityList data={this.state.details}/>
+                }
+            </div>
+        )
+    }
+}
 
 function PostDetails(){
     const [details, setDetails] = useState({});
     const [comments, setComments] = useState({});
     const [commentsLoading, setCommentsLoading] = useState(true);
+    const [commentsOffset, setCommentsOffset] = useState(5);
     const [loading, setLoading] = useState(true);
-
     const { postid } = useParams();
+
     // let details = {};
 
     useEffect(() => {
@@ -108,6 +196,10 @@ function PostDetails(){
             })
     }, []);
 
+    function LoadMoreComments(){
+
+    }
+
 
     return(
         <div id = "board" className="scrollbox" >
@@ -122,6 +214,7 @@ function PostDetails(){
             
             {loading ? <div>loading</div> : <Post data={details}/> }
             {commentsLoading ? <div>loading comments</div> : <CommentList data={comments}/> }
+            <button > load more comments</button>
 
         </div>
     )
@@ -172,7 +265,8 @@ class Website extends React.Component{
 
                     <hr style={{margin: '0px'}}></hr>
 
-                    <p>  </p>
+                    <Communities/>
+
                 </div>
         
                 <div id = "friends" className="scrollbox"> 
@@ -186,6 +280,8 @@ class Website extends React.Component{
                 <Routes>
                     <Route path="/" element={<Board />} />
                     <Route path="/post/:postid" element={<PostDetails />} />
+                    <Route path="/community/:communityid" element={<CommunityBoard />} />
+                    <Route path="/login" element={<LoginPage />} />
 
                 </Routes>
 

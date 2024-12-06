@@ -13,18 +13,20 @@ function Post(post){
   
             <div style = {{float: 'right', color: 'gray'}}> {post.data.pub_date} </div>
             
-            <h2 style={{marginTop: '10px', clear: 'both'}}>{post.data.title} </h2>
             
             <a href='a' style = {{color: 'gray'}}> 
-              <div style={{paddingBottom: '25px'}}> user: &nbsp; {post.data.author.username} </div> 
+              <div style={{paddingBottom: '25px', clear: 'both'}}> user: &nbsp; {post.data.author.username} </div> 
             </a>
-  
-            
+
+            <h2 style={{marginTop: '10px', clear: 'both'}}>{post.data.title} </h2>
+
             <div>
-                <div>
                 {post.data.content}
-                </div>
-                <img src={post.data.image} ></img>
+            </div>
+
+            <div style={{textAlign: 'center'}}>
+
+                <img src={post.data.image} style={{maxWidth: '60%', margin: '0 auto'}} ></img>
             </div>
   
             <a href="a">
@@ -36,7 +38,7 @@ function Post(post){
                 </div>
             </a>
   
-            <a href={"post/" + post.data.id} style={{lineHeight: '25px'}}>
+            <a href={"/post/" + post.data.id} style={{lineHeight: '25px'}}>
                 <div className="button" style={{marginTop: '25px', float: 'left',  marginRight: '10px', padding: '5px 10px', lineHeight: '25px'}}> 
                     <div style={{height: '100%', float: 'left'}}>
                         <img src={process.env.PUBLIC_URL + "/comment-dots-svgrepo-com.svg"} style={{height: '100%'}}></img>
@@ -48,22 +50,8 @@ function Post(post){
     )
   }
 
-function CommunityButton(community){
-    return (
-        <div>
-            <a href='{% url "community" community.id %}' style="">
-                <div className="light_gray rounded small_button" style="clear: both; margin-top: 10px"> 
-                    <img src={community.data.icon} className="rounded small_image" style="float: left"></img>
-                    <div style={{float: 'left', overflow: 'hidden', marginLeft: '10px'}} className="button_text" > {community.data.name} </div>
-                </div>
-            </a>
-        </div>
-    )
-}
-
-
 function Comment(comment){
-    console.log(comment.data.user)
+    // console.log(comment.data.user)
     return (
         <div id = "comment" style={{overflow: 'hidden'}}>
             <img src={ comment.data.user.avatar } className="small_image rounded" style={{float: 'left', marginRight: '10px'}}></img>
@@ -102,49 +90,19 @@ function CommentList(comment_data){
     )
 }
 
-function LoadPosts(details){
+function PostList(details){
     return(
         <div>
             {details.data.map((output, id) =>(
-                <div>
-                    <Post data={output}/>
-                </div>
+                <Post data={output} key = {id} />
             ))}
         </div>
     )
 }
 
-class PostList extends React.Component{
-    // class App extends React.Component{
-    state = {details: [], }
-
-    componentDidMount(){
-        let data;
-        axios.get('http://127.0.0.1:8000/posts/?limit=5&offset=0').then(res => {
-        data = res.data.results;
-        this.setState({
-            details: data
-        });
-        }).catch(err => {})
-    }
-
-    render() {
-        return(
-        <div>
-            <header> board </header>
-            <hr></hr>
-            {this.state.details.map((output, id) =>(
-                // <p>{output.title}</p>
-                <Post data={output}/>
-            ))}
-        </div>
-        )
-    }
-}
 
 export{
-    PostList, 
-    LoadPosts,
+    PostList,
     Post,
     CommentList
 };
