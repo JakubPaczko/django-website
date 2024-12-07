@@ -1,9 +1,10 @@
-import React, { createRef, useEffect, useState } from 'react';
+import React, { createRef, useEffect, useState, useContext } from 'react';
 import './main.css'
 import {PostList, Post, CommentList}from './post'
 import { CommunityList } from './community';
 import axios from 'axios';
-import {Routes, Route, useParams, Form} from 'react-router-dom'
+import {Routes, Route, useParams, Form, Link, Links, Navigate} from 'react-router-dom'
+import {AuthContext} from '../context/auth';
 
 
 
@@ -116,10 +117,17 @@ function CommunityBoard(){
 }
 
 function LoginPage(){
+    let {loginUser} = useContext(AuthContext)
+    let {user} = useContext(AuthContext)
+
+    // let  loginUser = useContext(AuthContext);
+
     return (
         <div id='board' style={{textAlign: 'center'}}>
             <h1> Login </h1>
-            <form>
+            {user ?
+            <Navigate to='/'/> :
+            <form onSubmit={loginUser}>
                 <p>
                     <input type='text' name='username' placeholder='Enter username'/>
                 </p>
@@ -130,6 +138,7 @@ function LoginPage(){
                     <input type='submit'/>
                 </p>
             </form>
+            }
         </div>
     )
 }
@@ -223,72 +232,72 @@ function PostDetails(){
 
 // }
 
-class Website extends React.Component{
-    render()
-    {
-        return (
-        <div>
+function Website(){
+    let {user, logoutUser} = useContext(AuthContext)
 
-            <div className="header" style= {{backgroundColor: "black", color: 'white', height: '100px'}} > 
-                <div style={{height: '100%', float: 'left'}}>
-                    <img src={process.env.PUBLIC_URL + "/purpledidlogo.png"} style={{float: 'left', height: '50%'}} ></img>
-                    <h2 style={{float: 'left', margin: '0', lineHeight: '64px'}}>PurpleDid</h2>
-                </div>
+    return (
+    <div>
 
-        
-                <div style ={{float: 'right'}}>
-                    <a href=""> logout </a>
-                </div>
-
-                
-                <div style={{margin: 'auto'}}>
-                    <input type='text'></input>
-                </div>
+        <div className="header" style= {{backgroundColor: "black", color: 'white', height: '100px'}} > 
+            <div style={{height: '100%', float: 'left'}}>
+                <img src={process.env.PUBLIC_URL + "/purpledidlogo.png"} style={{float: 'left', height: '50%'}} ></img>
+                <h2 style={{float: 'left', margin: '0', lineHeight: '64px'}}>PurpleDid</h2>
             </div>
 
-            <hr style={{margin: '0px'}}></hr>
-            <div id = "container">
+    
+            <div style ={{float: 'right'}}>
+                {user ? <a onClick={logoutUser}>logout</a> : <Link to='/login'>login</Link> }
+                {/* <a href=""> logout </a> */}
+            </div>
 
-                <div id = "groups" className="scrollbox padding_left padding_right"> 
-                    <p>
-                        <a href =""> Home </a>
-                    </p>
-                    <p>
-                        <a href =""> Popular </a>
-                    </p>
-                    <p>
-                        <a href =""> Browse communities </a>
-                    </p>
-                    <p>
-                        <a href =""> create community </a>
-                    </p>
-
-                    <hr style={{margin: '0px'}}></hr>
-
-                    <Communities/>
-
-                </div>
-        
-                <div id = "friends" className="scrollbox"> 
-
-                </div>
-
-                <div id = "boardheader">
-
-
-                </div>
-                <Routes>
-                    <Route path="/" element={<Board />} />
-                    <Route path="/post/:postid" element={<PostDetails />} />
-                    <Route path="/community/:communityid" element={<CommunityBoard />} />
-                    <Route path="/login" element={<LoginPage />} />
-
-                </Routes>
-
+            
+            <div style={{margin: 'auto'}}>
+                <input type='text'></input>
             </div>
         </div>
-        )
-    }
+
+        <hr style={{margin: '0px'}}></hr>
+        <div id = "container">
+
+            <div id = "groups" className="scrollbox padding_left padding_right"> 
+                <p>
+                    <a href =""> Home </a>
+                </p>
+                <p>
+                    <a href =""> Popular </a>
+                </p>
+                <p>
+                    <a href =""> Browse communities </a>
+                </p>
+                <p>
+                    <a href =""> create community </a>
+                </p>
+
+                <hr style={{margin: '0px'}}></hr>
+
+                <Communities/>
+
+            </div>
+    
+            <div id = "friends" className="scrollbox"> 
+
+            </div>
+
+            <div id = "boardheader">
+
+
+            </div>
+            <Routes>
+                <Route path="/" element={<Board />} />
+                <Route path="/post/:postid" element={<PostDetails />} />
+                <Route path="/community/:communityid" element={<CommunityBoard />} />
+                <Route path="/login" element={<LoginPage />} />
+
+            </Routes>
+
+        </div>
+    </div>
+    )
 }
 
 export default Website;

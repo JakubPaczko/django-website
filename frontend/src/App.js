@@ -4,6 +4,7 @@ import React from 'react';
 import {Routes, Route} from 'react-router-dom'
 import Post from './components/post'
 import Website from './components/website'
+import { AuthProvider } from './context/auth';
 
 function TestPost(){
   return (
@@ -13,9 +14,10 @@ function TestPost(){
 
 const App = () =>{
   return (
-    <div>
-
+    <div className='App'>
+      <AuthProvider>
        <Website/>
+      </AuthProvider>
     </div>
   );
 }
