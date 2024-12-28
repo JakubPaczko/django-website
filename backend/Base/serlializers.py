@@ -14,7 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
 class CommunitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Community
-        fields = ['id', 'name', 'icon', 'description', 'date']
+        fields = ['id', 'name', 'icon', 'description', 'date', 'admin']
 
 class CommentSerializer(serializers.ModelSerializer):
     user = UserSerializer()

@@ -116,6 +116,55 @@ function CommunityBoard(){
     )
 }
 
+function AddCommunity(){
+    let {user} = useContext(AuthContext)
+
+    const addCommunity = async (e) =>{
+        e.preventDefault()
+        axios.post('http://127.0.0.1:8000/communitys/', {
+            name: 'Fred',
+            description: 'Flintstone',
+            admin: 2,
+          }, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          }
+        ).then(function (response) {
+            console.log(response);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+
+    }
+
+    return (
+        <div id='board' style={{textAlign: 'center'}}>
+            <h1> Create community </h1>
+            {/* <Navigate to='/'/> : */}
+            {user ?
+            
+            <form onSubmit={addCommunity}>
+                <p>
+                    <input type='text' name='name' placeholder='Enter community name'/>
+                </p>
+                <p>
+                    <textarea name='description' cols="50" rows="10" placeholder='Description'/>
+                </p>
+                <p>
+                    <input type='file' name='image' placeholder='select image'/>
+                </p>
+                <p>
+                    <input type='submit' value='Create community'/>
+                </p>
+            </form> :
+            <Navigate to='/'/> 
+            }
+        </div>
+    )
+}
+
 function LoginPage(){
     let {loginUser} = useContext(AuthContext)
     let {user} = useContext(AuthContext)
@@ -205,10 +254,6 @@ function PostDetails(){
             })
     }, []);
 
-    function LoadMoreComments(){
-
-    }
-
 
     return(
         <div id = "board" className="scrollbox" >
@@ -292,6 +337,8 @@ function Website(){
                 <Route path="/post/:postid" element={<PostDetails />} />
                 <Route path="/community/:communityid" element={<CommunityBoard />} />
                 <Route path="/login" element={<LoginPage />} />
+                <Route path="/addCommunity" element={<AddCommunity />} />
+
 
             </Routes>
 

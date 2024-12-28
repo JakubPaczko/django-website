@@ -9,9 +9,11 @@ from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from Base.serlializers import PostSerializer, CommunitySerializer, UserSerializer, CommentSerializer
 from rest_framework.response import Response
-
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.decorators import api_view, permission_classes, action
+from Base.filters import PostFilter
+import json
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
@@ -25,24 +27,35 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
-
+# @api_view(['GET'])
 class PostViewSet(viewsets.ModelViewSet):
     #
     serializer_class = PostSerializer
     queryset = Post.objects.all().order_by('-pub_date')
+    filterset_class = PostFilter
+
 
 class CommunityViewSet(viewsets.ModelViewSet):
     serializer_class = CommunitySerializer
     queryset = Community.objects.all().order_by('date')
 
+    # @permission_classes([AllowAny])
+    # def create(self, request):
+    #     serializer = self.serializer_class(data=request.data)
+        
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         print(request.data)
+    #         return Response({'status': 'community added'})
+    #     else:
+    #         return Response({serializer.errors, request.data},
+    #                         status=status.HTTP_400_BAD_REQUEST)
+
+
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-class CreateUserView(generics.CreateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [AllowAny]
 
 class CommentsViewSet(generics.ListAPIView):
     serializer_class = CommentSerializer
@@ -58,18 +71,12 @@ class CommunityPostsViewSet(generics.ListAPIView):
         community = self.kwargs['community_id']
         return Post.objects.filter(community=community)
 
+@api_view(['GET'])
+@permission_classes([AllowAny])
 def board(request):
-    context = {}
-    # context = {
-    #     "post_list" : post_list,
-    #     "community_list" : communitylist,
-    # }
-
-    if request.user.is_authenticated:
-        context["friend_list"] = request.user.following.all()
-    
-
-    return render(request, "website_template.html", context)
+    posts = Post.objects.all()
+    serializer = PostSerializer(posts, many=True)
+    return Response(serializer.data)
 
 def community(request, pk):
     community = Community.objects.get(pk=pk)

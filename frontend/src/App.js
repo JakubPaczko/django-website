@@ -14,7 +14,7 @@ function TestPost(){
 
 const App = () =>{
   return (
-    <div className='App'>
+    <div>
       <AuthProvider>
        <Website/>
       </AuthProvider>

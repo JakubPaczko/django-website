@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from datetime import datetime 
+from django.utils import timezone
 
 class User(AbstractUser):
     avatar = models.ImageField(blank=True, null=True, upload_to='images/user_avatars/')
@@ -14,7 +15,7 @@ class Community(models.Model):
     name = models.CharField(max_length=32, blank=False)
     icon = models.ImageField(blank=True, null=True, upload_to='images/community_icons/')
     description = models.CharField(max_length=1024, blank=False, default="Description")
-    date = models.DateField()
+    date = models.DateTimeField(default=timezone.now())
 
     def __str__(self):
         return "@" + self.name
@@ -40,6 +41,7 @@ class Post(models.Model):
     def get_comment_count(self):
         return self.comments.all().count()
 
+
 class Comment(models.Model):
     content = models.CharField(max_length=1024)
     user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='comments')
@@ -49,6 +51,7 @@ class Comment(models.Model):
     def __str__(self):
         return self.content[0:50]
  #   likes = models.ManyToMany#Field(User, through="Like")
+
 
 class PostLike(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="likes")
