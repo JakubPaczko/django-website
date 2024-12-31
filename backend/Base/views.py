@@ -7,9 +7,9 @@ from Base.forms import CommentForm, PostForm, RegisterForm, CommunityForm
 from Base.models import Post, Comment, User, Community, PostLike
 from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from Base.serlializers import PostSerializer, CommunitySerializer, UserSerializer, CommentSerializer
+from Base.serlializers import PostSerializer, CommunitySerializer, UserSerializer, CommentSerializer, PostLikeSerializer
 from rest_framework.response import Response
-
+from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
@@ -25,11 +25,54 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
-
+# @permission_classes([AllowAny])
 class PostViewSet(viewsets.ModelViewSet):
-    #
+    permission_classes = (AllowAny,)
     serializer_class = PostSerializer
     queryset = Post.objects.all().order_by('-pub_date')
+    
+    @action(detail=True, methods=['get'], permission_classes=[IsAuthenticated])
+    def is_liked_by_user(self, request, pk=None):
+        post = self.get_object()
+        user = request.user
+
+        if PostLike.objects.filter(post=post, user=user).exists:
+            return Response({'status': True })
+        else:
+            return Response({'status': False })
+
+
+    @action(detail=True, methods=['get'])
+    def like_count(self, request, pk=None):
+        post = self.get_object()
+        likes = PostLike.objects.filter(post=post)
+        return Response({'status': likes.__len__() })
+
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
+    def add_post_like(self, request, pk=None):
+        post = self.get_object()
+        user = request.user
+
+        data = {
+            'user': user.id,
+            'post': post.id,
+        }
+
+        serializer = PostLikeSerializer(data=data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'status': 'like added'})
+            print(serializer.data)
+        else:
+            like_obj = PostLike.objects.filter(post=post, user=user)
+            
+            if like_obj.exists():
+                like_obj.delete()
+                return Response({'status': 'like deleted'})
+            
+            print(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class CommunityViewSet(viewsets.ModelViewSet):
     serializer_class = CommunitySerializer
@@ -57,6 +100,9 @@ class CommunityPostsViewSet(generics.ListAPIView):
     def get_queryset(self):
         community = self.kwargs['community_id']
         return Post.objects.filter(community=community)
+
+def likes(request):
+    return render(PostLike.objects.all())
 
 def board(request):
     context = {}

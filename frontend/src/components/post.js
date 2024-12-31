@@ -1,9 +1,60 @@
 
 import axios from 'axios';
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import './main.css'
+import { AuthContext } from '../context/auth';
 
 function Post(post){
+    const [is_liked, set_liked] = useState(false)
+    const [like_count, set_like_count] = useState(0)
+    let {token} = useContext(AuthContext)
+
+    useEffect(() => {
+        axios.get(`http://127.0.0.1:8000/posts/${post.data.id}/is_liked_by_user/`,
+            {
+                headers: {
+                    Authorization : 'Bearer ' + String(token.access),
+                }
+            }).then(res => {
+                set_liked(res.data.status);
+            }).catch(err => {
+                console.log(err)
+            })
+        set_like_count(post.data.like_count)
+      }, []);
+
+    const AddComment = () => {
+
+    }
+
+    const AddPostLike = (post_id) =>{
+        axios.post(`http://127.0.0.1:8000/posts/${post_id}/add_post_like/`,
+            { },
+            {
+                headers: {
+                    Authorization : 'Bearer ' + String(token.access),
+                }
+            })
+            .then(function (response) {
+                if( response.data.status === 'like added'){
+                    set_liked(true)
+                    set_like_count(like_count+1)
+                }
+                else{
+                    set_liked(false)
+                    set_like_count(like_count-1)
+                }
+                console.log(response);
+            })
+            .catch(function (error) {
+                console.log(error.response);
+            });
+    }
+
+    const UpdatePostLikes = (post_id) => {
+
+    }
+
     return (
         <div id = "post" style={{overflow: "hidden"}} className="post">
                 <a href="a">
@@ -29,13 +80,22 @@ function Post(post){
                 <img src={post.data.image} style={{maxWidth: '60%', margin: '0 auto'}} ></img>
             </div>
   
-            <a href="a">
-                <div  className="button" style={{marginTop: '25px', float: 'left',  marginRight: '10px', padding: '5px 10px', lineHeight: '25px'}}>
+            <a onClick={() => AddPostLike(post.data.id)}>
+                { !is_liked ? 
+                <div  className="button unselectable" style={{marginTop: '25px', float: 'left',  marginRight: '10px', padding: '5px 10px', lineHeight: '25px'}}>
                     <div style={{height: '100%', float: 'left', paddingRight: '5px'}}>
                         <img src={process.env.PUBLIC_URL + "/plus-circle-svgrepo-com.svg"} style={{height: '100%'}}></img>
                     </div>
-                    <div style={{overflow: 'hidden'}}> {post.data.like_count} </div>
+                    <div style={{overflow: 'hidden'}}> {like_count} </div>
                 </div>
+                :
+                <div  className="button_clicked unselectable" style={{marginTop: '25px', float: 'left',  marginRight: '10px', padding: '5px 10px', lineHeight: '25px'}}>
+                    <div style={{height: '100%', float: 'left', paddingRight: '5px'}}>
+                        <img src={process.env.PUBLIC_URL + "/plus-circle-svgrepo-com.svg"} style={{height: '100%'}}></img>
+                    </div>
+                    <div style={{overflow: 'hidden'}}> {like_count} </div>
+                </div>
+                }
             </a>
   
             <a href={"/post/" + post.data.id} style={{lineHeight: '25px'}}>
@@ -77,6 +137,25 @@ function Comment(comment){
     )
 }
 
+async function AddPostLike__(post_id = 1){
+    let authTokens = JSON.parse(localStorage.getItem('authToken'))
+
+    axios.post(`http://127.0.0.1:8000/posts/${post_id}/add_post_like/`,
+        { },
+        {
+            headers: {
+                Authorization : 'Bearer ' + String(authTokens.access),
+            }
+        }
+    )
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error.response);
+      });
+}
+
 function CommentList(comment_data){
     return(
         <div>
@@ -104,5 +183,5 @@ function PostList(details){
 export{
     PostList,
     Post,
-    CommentList
-};
+    CommentList,
+}
