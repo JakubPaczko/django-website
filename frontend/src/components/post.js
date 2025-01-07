@@ -7,15 +7,17 @@ import { AuthContext } from '../context/auth';
 function Post(post){
     const [is_liked, set_liked] = useState(false)
     const [like_count, set_like_count] = useState(0)
+
     let {token} = useContext(AuthContext)
 
     useEffect(() => {
         axios.get(`http://127.0.0.1:8000/posts/${post.data.id}/is_liked_by_user/`,
             {
                 headers: {
-                    Authorization : 'Bearer ' + String(token.access),
+                    Authorization : 'Bearer ' + String(token ? token.access : ''),
                 }
             }).then(res => {
+                console.log(res.data.status)
                 set_liked(res.data.status);
             }).catch(err => {
                 console.log(err)
@@ -32,7 +34,7 @@ function Post(post){
             { },
             {
                 headers: {
-                    Authorization : 'Bearer ' + String(token.access),
+                    Authorization : 'Bearer ' + String(token ? token.access : ''),
                 }
             })
             .then(function (response) {
@@ -50,6 +52,8 @@ function Post(post){
                 console.log(error.response);
             });
     }
+
+
 
     const UpdatePostLikes = (post_id) => {
 
@@ -133,7 +137,7 @@ function Comment(comment){
                     <div style={{overflow: 'hidden'}}> 100 </div>
                 </div>
             </a>
-  </div>
+        </div>
     )
 }
 
@@ -161,8 +165,8 @@ function CommentList(comment_data){
         <div>
             Comments
             {comment_data.data.map((output, id) =>(
-                <div>
-                    <Comment data={output}/>
+                <div key={id}>
+                    <Comment data={output} />
                 </div>
             ))}
     </div>

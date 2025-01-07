@@ -39,7 +39,7 @@ urlpatterns = [
     # path("logout/", views.user_logout, name="user_logout"),
 
     path("likes/", views.likes, name = "likes"),
-    path('api/create/', CreateUserView.as_view()),
+    # path('api/create/', CreateUserView.as_view()),
     # path('api/create/', CreateUserView.as_view()),
     path('post_comments/<str:post_id>/', CommentsViewSet.as_view()),
     path('community_posts/<str:community_id>/', CommunityPostsViewSet.as_view()),

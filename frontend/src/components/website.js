@@ -4,7 +4,7 @@ import {PostList, Post, CommentList}from './post'
 import { CommunityList } from './community';
 import axios from 'axios';
 import {Routes, Route, useParams, Form, Link, Links, Navigate} from 'react-router-dom'
-import {AuthContext} from '../context/auth';
+import {AuthContext, AuthProvider} from '../context/auth';
 
 
 
@@ -227,12 +227,15 @@ function PostDetails(){
     const [commentsLoading, setCommentsLoading] = useState(true);
     const [commentsOffset, setCommentsOffset] = useState(5);
     const [loading, setLoading] = useState(true);
-    const { postid } = useParams();
+    const { post_id } = useParams();
+    const {user} = useContext(AuthContext)
+    const {token} = useContext(AuthContext)
+    const [commentText, setCommentText] = useState('')
 
     // let details = {};
 
     useEffect(() => {
-        axios.get('http://127.0.0.1:8000/posts/' + postid + '/').then(res => {
+        axios.get('http://127.0.0.1:8000/posts/' + post_id + '/').then(res => {
             // setDetails(res.data)
                 setDetails(res.data);
                 setTimeout(() => {
@@ -242,7 +245,7 @@ function PostDetails(){
             }).catch(err => {
                 setLoading(false)
             })
-        axios.get('http://127.0.0.1:8000/post_comments/' + postid + '/').then(res => {
+        axios.get('http://127.0.0.1:8000/post_comments/' + post_id + '/').then(res => {
             // setDetails(res.data)
             setComments(res.data);
                 setTimeout(() => {
@@ -254,9 +257,34 @@ function PostDetails(){
             })
     }, []);
 
+    const SetCommentText = (e) => {
+        setCommentText(e.target.value)
+        console.log(commentText)
+    }
+
+    const addComment = (e) =>{
+        e.preventDefault()
+        axios.post(`http://127.0.0.1:8000/posts/${post_id}/add_post_comment/`,
+            { 
+                'content' : commentText
+            },
+            {
+                headers: {
+                    Authorization : 'Bearer ' + String(token ? token.access : ''),
+                }
+            })
+            .then(function (response) {
+                console.log(response)
+            })
+            .catch(function (error) {
+                console.log(error.response);
+            });
+    }
+
 
     return(
         <div id = "board" className="scrollbox" >
+            
             <a href="/">
                 <div  className="button" style={{marginTop: '25px', marginRight: '10px', padding: '5px 10px', lineHeight: '25px', width: '100px'}}>
                     <div style={{height: '100%', float: 'left', paddingRight: '5px'}}>
@@ -265,8 +293,27 @@ function PostDetails(){
                     <div style={{overflow: 'hidden'}}> return </div>
                 </div>
             </a>
-            
             {loading ? <div>loading</div> : <Post data={details}/> }
+
+            <div id = "comment" style={{overflow: 'hidden'}}>
+                { user ?
+                <div>
+                    <h3 >Add comment</h3>
+                    
+                    <div style={{textAlign: 'center', width: '100%'}}>
+                        <textarea onChange={SetCommentText} className='rounded' name="content" rows="4" placeholder='comment content' style={{width: '100%', resize: 'none', display: 'block', boxSizing: 'border-box'}}> </textarea>
+                    </div>
+                    
+                        <a onClick={addComment} href=''>
+                            <div  className="button" style={{marginTop: '25px', float: 'left',  marginRight: '10px', padding: '5px 10px', lineHeight: '25px'}}>
+                                <div style={{overflow: 'hidden'}}> add comment </div>
+                            {/* <h3 >Add comment</h3> */}
+                            </div>
+                        </a>
+                </div>
+                : <div> <a>Log in</a> to add comment </div>}
+            </div>
+            
             {commentsLoading ? <div>loading comments</div> : <CommentList data={comments}/> }
             <button > load more comments</button>
 
@@ -334,7 +381,7 @@ function Website(){
             </div>
             <Routes>
                 <Route path="/" element={<Board />} />
-                <Route path="/post/:postid" element={<PostDetails />} />
+                <Route path="/post/:post_id" element={<PostDetails />} />
                 <Route path="/community/:communityid" element={<CommunityBoard />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/addCommunity" element={<AddCommunity />} />

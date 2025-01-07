@@ -12,6 +12,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
+from django.forms.models import model_to_dict
 from rest_framework.decorators import api_view, permission_classes, action
 from Base.filters import PostFilter
 import json
@@ -39,12 +40,32 @@ class PostViewSet(viewsets.ModelViewSet):
         post = self.get_object()
         user = request.user
 
-        if PostLike.objects.filter(post=post, user=user).exists:
+        postlike = PostLike.objects.filter(post=post, user=user)
+
+        if postlike.exists():
             return Response({'status': True })
         else:
             return Response({'status': False })
 
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
+    def add_post_comment(self, request, pk=None):
+        post = self.get_object()
+        user = request.user
+        
+        data = request.data
+        data['user'] = user.id
+        data['post'] = post.id
 
+        print(data)
+        serializer = CommentSerializer(data=data)
+        print(serializer.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'status': 'comment added'})
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
     @action(detail=True, methods=['get'])
     def like_count(self, request, pk=None):
         post = self.get_object()
@@ -66,7 +87,6 @@ class PostViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             serializer.save()
             return Response({'status': 'like added'})
-            print(serializer.data)
         else:
             like_obj = PostLike.objects.filter(post=post, user=user)
             
@@ -74,7 +94,6 @@ class PostViewSet(viewsets.ModelViewSet):
                 like_obj.delete()
                 return Response({'status': 'like deleted'})
             
-            print(serializer.data)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class CommunityViewSet(viewsets.ModelViewSet):
