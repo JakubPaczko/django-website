@@ -55,6 +55,7 @@ const AuthProvider = ({children}) => {
 
     let contextData = {
         user : user,
+        token : token,
         loginUser:loginUser,
         logoutUser: logoutUser,
     }

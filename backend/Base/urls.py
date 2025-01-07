@@ -16,6 +16,7 @@ router = routers.DefaultRouter()
 router.register(r'posts', PostViewSet)
 router.register(r'communitys', CommunityViewSet)
 router.register(r'users', UserViewSet)
+
 # router.register(r'post_comments', CommentsViewSet)
 # router.register(r'comments', CommentViewSet)
 
@@ -37,6 +38,8 @@ urlpatterns = [
     # path("create_community/", views.create_community, name="create_community"),
     # path("logout/", views.user_logout, name="user_logout"),
 
+    path("likes/", views.likes, name = "likes"),
+    path('api/create/', CreateUserView.as_view()),
     # path('api/create/', CreateUserView.as_view()),
     path('post_comments/<str:post_id>/', CommentsViewSet.as_view()),
     path('community_posts/<str:community_id>/', CommunityPostsViewSet.as_view()),
