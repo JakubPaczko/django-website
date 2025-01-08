@@ -225,7 +225,6 @@ function PostDetails(){
     const [details, setDetails] = useState({});
     const [comments, setComments] = useState({});
     const [commentsLoading, setCommentsLoading] = useState(true);
-    const [commentsOffset, setCommentsOffset] = useState(5);
     const [loading, setLoading] = useState(true);
     const { post_id } = useParams();
     const {user} = useContext(AuthContext)
@@ -236,26 +235,32 @@ function PostDetails(){
 
     useEffect(() => {
         axios.get('http://127.0.0.1:8000/posts/' + post_id + '/').then(res => {
-            // setDetails(res.data)
                 setDetails(res.data);
                 setTimeout(() => {
-                    setLoading(false)
+                    setLoading(false);
                   }, 100);
 
             }).catch(err => {
-                setLoading(false)
+                setLoading(false);
             })
         axios.get('http://127.0.0.1:8000/post_comments/' + post_id + '/').then(res => {
-            // setDetails(res.data)
             setComments(res.data);
                 setTimeout(() => {
-                    setCommentsLoading(false)
+                    setCommentsLoading(false);
                     }, 100);
 
             }).catch(err => {
-                setCommentsLoading(false)
+                setCommentsLoading(false);
             })
     }, []);
+
+    const ReloadComments = () => {
+        axios.get('http://127.0.0.1:8000/post_comments/' + post_id + '/').then(res => {
+                setComments(res.data);
+            }).catch(err => {
+                console.error(err)
+            })
+    }
 
     const SetCommentText = (e) => {
         setCommentText(e.target.value)
@@ -275,9 +280,10 @@ function PostDetails(){
             })
             .then(function (response) {
                 console.log(response)
+                ReloadComments();
             })
             .catch(function (error) {
-                console.log(error.response);
+                console.error(error.response);
             });
     }
 

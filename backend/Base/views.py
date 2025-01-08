@@ -5,7 +5,7 @@ from datetime import datetime
 from django.contrib.auth import authenticate, login, logout
 from Base.forms import CommentForm, PostForm, RegisterForm, CommunityForm
 from Base.models import Post, Comment, User, Community, PostLike
-from rest_framework import viewsets, generics
+from rest_framework import viewsets, generics, status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from Base.serlializers import PostSerializer, CommunitySerializer, UserSerializer, CommentSerializer, PostLikeSerializer
 from rest_framework.response import Response
@@ -16,7 +16,6 @@ from django.forms.models import model_to_dict
 from rest_framework.decorators import api_view, permission_classes, action
 from Base.filters import PostFilter
 import json
-
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
@@ -56,9 +55,8 @@ class PostViewSet(viewsets.ModelViewSet):
         data['user'] = user.id
         data['post'] = post.id
 
-        print(data)
+        # print(data)
         serializer = CommentSerializer(data=data)
-        print(serializer.data)
 
         if serializer.is_valid():
             serializer.save()
@@ -123,7 +121,7 @@ class CommentsViewSet(generics.ListAPIView):
 
     def get_queryset(self):
         post = self.kwargs['post_id']
-        return Comment.objects.filter(post=post)
+        return Comment.objects.filter(post=post).order_by('-date')
 
 class CommunityPostsViewSet(generics.ListAPIView):
     serializer_class = PostSerializer

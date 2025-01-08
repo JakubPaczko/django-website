@@ -116,13 +116,26 @@ function Post(post){
 
 function Comment(comment){
     // console.log(comment.data.user)
+    const [user, setUser] = useState({})
+
+    useEffect(() => {
+        axios.get(`http://127.0.0.1:8000/users/${comment.data.user}/`,
+            {
+            }).then(res => {
+                console.log(res.data.status)
+                setUser(res.data)
+            }).catch(err => {
+                console.log(err)
+            })
+    }, [])
+
     return (
         <div id = "comment" style={{overflow: 'hidden'}}>
-            <img src={ comment.data.user.avatar } className="small_image rounded" style={{float: 'left', marginRight: '10px'}}></img>
+            <img src={ user.avatar } className="small_image rounded" style={{float: 'left', marginRight: '10px'}}></img>
 
             <div style = {{float: 'right', color: 'gray'}}> date </div>
             
-            <a href=""><h4 style={{marginTop: '0', color: 'gray'}}> user: {comment.data.user.username} </h4></a>
+            <a href=""><h4 style={{marginTop: '0', color: 'gray'}}> user: {user.username} </h4></a>
             {/* <h4 style="margin-top: 0; color: gray;"> user: &nbsp; [deleted] </h4> */}
             
             <div>
