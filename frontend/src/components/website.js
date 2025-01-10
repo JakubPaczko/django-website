@@ -210,7 +210,7 @@ class Communities extends React.Component{
     }
 
     render(){
-        console.log(this.state.details)
+        // console.log(this.state.details)
         return(
             <div>
                 {
@@ -243,7 +243,7 @@ function PostDetails(){
             }).catch(err => {
                 setLoading(false);
             })
-        axios.get('http://127.0.0.1:8000/post_comments/' + post_id + '/').then(res => {
+        axios.get('http://127.0.0.1:8000/comments/?post=' + post_id).then(res => {
             setComments(res.data);
                 setTimeout(() => {
                     setCommentsLoading(false);
@@ -255,7 +255,7 @@ function PostDetails(){
     }, []);
 
     const ReloadComments = () => {
-        axios.get('http://127.0.0.1:8000/post_comments/' + post_id + '/').then(res => {
+        axios.get('http://127.0.0.1:8000/comments/?post=' + post_id).then(res => {
                 setComments(res.data);
             }).catch(err => {
                 console.error(err)

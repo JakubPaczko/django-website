@@ -26,7 +26,7 @@ function Community(community){
 
 
 function CommunityList(details){
-    console.log(details)
+    // console.log(details)
     return(
         <div>
             {details.data.map((community, id) =>(

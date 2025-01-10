@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from Base import views
 from django.conf.urls.static import static
 from django.conf import settings
-from Base.views import PostViewSet, CommunityViewSet, UserViewSet, CommentsViewSet, CommunityPostsViewSet, MyTokenObtainPairView
+from Base.views import PostViewSet, CommunityViewSet, UserViewSet, CommentViewSet, CommunityPostsViewSet, MyTokenObtainPairView
 from rest_framework import routers
 
 
@@ -16,6 +16,8 @@ router = routers.DefaultRouter()
 router.register(r'posts', PostViewSet)
 router.register(r'communitys', CommunityViewSet)
 router.register(r'users', UserViewSet)
+router.register(r'comments', CommentViewSet, basename='comments')
+
 
 # router.register(r'post_comments', CommentsViewSet)
 # router.register(r'comments', CommentViewSet)
@@ -41,6 +43,6 @@ urlpatterns = [
     path("likes/", views.likes, name = "likes"),
     # path('api/create/', CreateUserView.as_view()),
     # path('api/create/', CreateUserView.as_view()),
-    path('post_comments/<str:post_id>/', CommentsViewSet.as_view()),
+    # path('post_comments/<str:post_id>/', CommentViewSet.as_view(), name='post_comments'),
     path('community_posts/<str:community_id>/', CommunityPostsViewSet.as_view()),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + router.urls

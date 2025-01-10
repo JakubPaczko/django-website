@@ -1,21 +1,21 @@
-from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from django.shortcuts import render
-from datetime import datetime
+from django.shortcuts import render, redirect
+from django.forms.models import model_to_dict
 from django.contrib.auth import authenticate, login, logout
+from datetime import datetime
 from Base.forms import CommentForm, PostForm, RegisterForm, CommunityForm
-from Base.models import Post, Comment, User, Community, PostLike
+from Base.models import Post, Comment, User, Community, PostLike, CommentLike
+from Base.filters import PostFilter, PostCommmentsFilter
+from Base.serlializers import PostSerializer, CommunitySerializer, UserSerializer, CommentSerializer, PostLikeSerializer, CommentLikeSerializer
 from rest_framework import viewsets, generics, status
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from Base.serlializers import PostSerializer, CommunitySerializer, UserSerializer, CommentSerializer, PostLikeSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, action
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
-from django.forms.models import model_to_dict
-from rest_framework.decorators import api_view, permission_classes, action
-from Base.filters import PostFilter
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 import json
+
+
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
@@ -116,12 +116,34 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
 
-class CommentsViewSet(generics.ListAPIView):
+class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
+    queryset = Comment.objects.all()
+    filterset_class = PostCommmentsFilter
+    
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
+    def add_like(self, request, pk=None):
+        comment = self.get_object()
+        user = request.user
 
-    def get_queryset(self):
-        post = self.kwargs['post_id']
-        return Comment.objects.filter(post=post).order_by('-date')
+        data = {
+            'user': user.id,
+            'comment': comment.id,
+        }
+
+        serializer = CommentLikeSerializer(data=data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'status': 'like added'})
+        else:
+            like_obj = CommentLike.objects.filter(comment=comment, user=user)
+            
+            if like_obj.exists():
+                like_obj.delete()
+                return Response({'status': 'like deleted'})
+            
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class CommunityPostsViewSet(generics.ListAPIView):
     serializer_class = PostSerializer
