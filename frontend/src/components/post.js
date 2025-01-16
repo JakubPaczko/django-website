@@ -168,13 +168,22 @@ function Comment(comment){
                 {comment.data.content}
             </div>
 
-            <a href="" onClick={AddCommentLike}>
-                <div  className="button" style={{marginTop: '25px', float: 'left',  marginRight: '10px', padding: '5px 10px', lineHeight: '25px'}}>
+            <a onClick={AddCommentLike}>
+                { !is_liked ? 
+                <div  className="button unselectable" style={{marginTop: '25px', float: 'left',  marginRight: '10px', padding: '5px 10px', lineHeight: '25px'}}>
                     <div style={{height: '100%', float: 'left', paddingRight: '5px'}}>
                         <img src={process.env.PUBLIC_URL + "/plus-circle-svgrepo-com.svg"} style={{height: '100%'}}></img>
                     </div>
                     <div style={{overflow: 'hidden'}}> {like_count} </div>
                 </div>
+                :
+                <div  className="button_clicked unselectable" style={{marginTop: '25px', float: 'left',  marginRight: '10px', padding: '5px 10px', lineHeight: '25px'}}>
+                    <div style={{height: '100%', float: 'left', paddingRight: '5px'}}>
+                        <img src={process.env.PUBLIC_URL + "/plus-circle-svgrepo-com.svg"} style={{height: '100%'}}></img>
+                    </div>
+                    <div style={{overflow: 'hidden'}}> {like_count} </div>
+                </div>
+                }
             </a>
         </div>
     )

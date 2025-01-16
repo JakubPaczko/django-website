@@ -118,7 +118,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-    queryset = Comment.objects.all()
+    queryset = Comment.objects.all().order_by('-date', '-date__hour', '-date__minute')
     filterset_class = PostCommmentsFilter
     
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
