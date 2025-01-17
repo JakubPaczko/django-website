@@ -1,6 +1,6 @@
 # Purpledid
 
-Purpledid is a vibrant social media platform designed to bring people together through shared interests and engaging content. With a focus on communities and meaningful interactions, Purpledid offers a unique and user-friendly experience.
+Purpledid is a vibrant social media platform inspired by Reddit, facebook and instagram
 
 ## Features
 
