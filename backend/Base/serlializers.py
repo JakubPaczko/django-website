@@ -16,6 +16,13 @@ class CommunitySerializer(serializers.ModelSerializer):
         model = Community
         fields = ['id', 'name', 'icon', 'description', 'date', 'admin']
 
+class UserDetailsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'avatar', 'email', 'following', 'followers', 'communities']
+
+
+
 class CommentSerializer(serializers.ModelSerializer):
     # user = UserSerializer()
     class Meta:
@@ -23,16 +30,20 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = ['id', 'user', 'content', 'post', 'date']
 
 
-class PostSerializer(serializers.ModelSerializer):
+class PostDetailsSerializer(serializers.ModelSerializer):
     author = UserSerializer()
     community = CommunitySerializer()
     like_count = serializers.IntegerField(source='get_like_count')
     comment_count = serializers.IntegerField(source='get_comment_count')
 
-
     class Meta:
         model = Post
         fields = ['id', 'title', 'image' ,'content', 'author', 'community', 'pub_date', 'like_count', 'comment_count']
+
+class PostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = ['id', 'title', 'image' ,'content', 'author', 'community']
 
 class PostLikeSerializer(serializers.ModelSerializer):
     class Meta:

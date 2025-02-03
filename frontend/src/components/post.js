@@ -29,8 +29,11 @@ function Post(post){
       }, []);
 
     const AddPostLike = (post_id) =>{
-        axios.post(`http://127.0.0.1:8000/posts/${post_id}/add_post_like/`,
-            { },
+        axios.post(`http://127.0.0.1:8000/post_likes/`,
+            { 
+                user : user.user_id,
+                post : post.data.id
+            },
             {
                 headers: {
                     Authorization : 'Bearer ' + String(token ? token.access : ''),
@@ -191,15 +194,16 @@ function Comment(comment){
 
 
 function CommentList(comment_data){
+    console.log(comment_data.data)
     return(
         <div>
             Comments
-            {comment_data.data.map((output, id) =>(
-                <div key={id}>
+            {comment_data.data.map((output) =>(
+                <div key={output.id}>
                     <Comment data={output} />
                 </div>
             ))}
-    </div>
+        </div>
     )
 }
 

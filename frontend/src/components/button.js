@@ -1,16 +1,23 @@
 function button(data){
     if(data.icon){
         return(
-            <div style={{with: data.width}}>
-                {/* {data.icon ? <img src=""></img> : <></>} */}
-                <img src=""></img>
-                <div> {data.content} </div>
-            </div>
+            <a href={data.url}>
+                <div style={{with: data.width}}>
+                    {/* {data.icon ? <img src=""></img> : <></>} */}
+                    <img src=""></img>
+                    <div> {data.content} </div>
+                </div>
+            </a>
         )
     }
     else{
         return(
-            <div style={{with: data.width}}></div>
+            <a>
+                <div style={{with: data.width}}>
+                    <div> {data.content} </div>
+
+                </div>
+            </a>
         )
     }
     

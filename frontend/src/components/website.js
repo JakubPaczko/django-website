@@ -1,4 +1,4 @@
-import React, { createRef, useEffect, useState, useContext } from 'react';
+import React, {useRef, createRef, useEffect, useState, useContext } from 'react';
 import './main.css'
 import {PostList, Post, CommentList}from './post'
 import { CommunityList } from './community';
@@ -72,22 +72,30 @@ function CommunityBoard(){
     const [loadingPosts, setLoadingPosts] = useState(true);
     const {communityid} = useParams();
     const [nextPosts] = useState('');
+    const [communityDetails, setCommunityDetails] = useState({})
 
     useEffect(() => {
         setLoadingPosts(true)
 
-        axios.get('http://127.0.0.1:8000/community_posts/' + communityid +'/?limit=5').then(res => {
-
-                setPosts(res.data.results);
+        axios.get('http://127.0.0.1:8000//posts/?author=&pub_date__lte=&pub_date__gte=&title__icontains=&community=' + communityid + '&?limit=5').then(res => {
+                setPosts(res.data);
                 
                 nextPosts = res.data.next;
-                console.log(nextPosts);
+                // console.log(nextPosts);
 
                 setLoadingPosts(false)
 
             }).catch(err => {
+                console.log(err)
                 setLoadingPosts(false)
             })
+
+        axios.get('http://127.0.0.1:8000//communitys/' + communityid + '/').then(res => {
+                setCommunityDetails(res.data)
+            }).catch(err => {
+                console.log(err)
+            })
+        
     }, [communityid]);
 
     const handleScroll = (e) => {
@@ -104,30 +112,126 @@ function CommunityBoard(){
 
             })
             .catch(err => {
-
+                console.log(err)
             })
         }
     }
 
     return(
-        <div id = "board" className="scrollbox" onScroll={ handleScroll }>
-            {loadingPosts ? <div> loading </div> : <PostList data={posts}/>}
+        <div style={{color:'white'}}>
+            <div id = "board" className="scrollbox" onScroll={ handleScroll }>
+                {communityDetails ? 
+                <div>
+                    <img src={communityDetails.icon} style={{borderRadius: '50%', width : '256px', height : '256px'}}></img> 
+                    <h1>@{communityDetails.name}</h1> 
+                    <div>{communityDetails.description}</div>
+                    <a href=''>join</a>
+                </div>
+                :
+                <h1>loading</h1>
+                }
+                {loadingPosts ? <div> loading </div> : <PostList data={posts}/>}
+            </div>
+        </div>
+    )
+}
+
+function AddPost(){
+    const imageRef = useRef()
+    const titleRef = useRef()
+    const contentRef = useRef()
+    const communityRef = useRef()
+    const [userCommunities, setUserCommunities] = useState([])
+    const {user, token} = useContext(AuthContext)
+
+
+    useEffect(()=>{
+        axios.get('http://localhost:8000/communitys/?users=' + user.user_id).then(res => {
+                setUserCommunities(res.data)
+            }).catch(err => {
+                console.log(err)
+            })
+    },[])
+
+    const addPost = (e) => {
+        e.preventDefault()
+        axios.post('http://localhost:8000/posts/',{ 
+            title : titleRef.current.value,
+            content : contentRef.current.value,
+            author : user.user_id,
+            community : communityRef.current.value,
+            image : imageRef.current.files[0],
+        },
+        {
+            headers: {
+                'accept': 'application/json',
+                'Accept-Language': 'en-US,en;q=0.8',
+                'Content-Type': 'multipart/form-data;',
+                // Authorization : 'Bearer ' + String(token ? token.access : ''),
+            }
+        })
+        .then(function (response) {
+            console.log(response)
+        })
+        .catch(function (error) {
+            console.error(error.response);
+            // setError(error.response.data.content[0])
+        });
+    }
+
+    return(
+        <div id='board' style={{textAlign: 'center'}}>
+            {/* <Navigate to='/'/> : */}
+            {user ?
+            
+            <form onSubmit={addPost}>
+                <p>
+                    <input ref={titleRef} type='text' name='title' placeholder='Post title'/>
+                </p>
+                <p>
+                    <textarea ref={contentRef} name='content' cols="50" rows="10" placeholder='Description'/>
+                </p>
+                <p>
+                    <input ref={imageRef} type='file' name='image' placeholder='select image'/>
+                </p>
+                
+                <select name="community" ref={communityRef}>
+                    {userCommunities?.map((output) =>(
+                            <option key={output.id} value={output.id}>{output.name}</option>
+                        ))}
+                </select>
+
+                <p>
+                    <input type='submit' value='Create community'/>
+                </p>
+            </form> 
+            :
+            <Navigate to='/'/> 
+            }
         </div>
     )
 }
 
 function AddCommunity(){
     let {user} = useContext(AuthContext)
+    const descriptionRef = useRef();
+    const nameRef = useRef();
+    const iconRef = useRef();
 
     const addCommunity = async (e) =>{
         e.preventDefault()
+        // console.log(iconRef.current.files[0])
         axios.post('http://127.0.0.1:8000/communitys/', {
-            name: 'Fred',
-            description: 'Flintstone',
-            admin: 2,
-          }, {
+            name: nameRef.current.value,
+            description: descriptionRef.current.value,
+            icon: iconRef.current.files[0],
+            admin: user.user_id,
+          }, 
+          {
             headers: {
-              'Content-Type': 'multipart/form-data'
+                'accept': 'application/json',
+                'Accept-Language': 'en-US,en;q=0.8',
+                'Content-Type': 'multipart/form-data;',
             }
           }
         ).then(function (response) {
@@ -136,10 +240,10 @@ function AddCommunity(){
           .catch(function (error) {
             console.log(error);
           });
-
     }
 
     return (
+
         <div id='board' style={{textAlign: 'center'}}>
             <h1> Create community </h1>
             {/* <Navigate to='/'/> : */}
@@ -147,20 +251,22 @@ function AddCommunity(){
             
             <form onSubmit={addCommunity}>
                 <p>
-                    <input type='text' name='name' placeholder='Enter community name'/>
+                    <input ref={nameRef} type='text' name='name' placeholder='Enter community name'/>
                 </p>
                 <p>
-                    <textarea name='description' cols="50" rows="10" placeholder='Description'/>
+                    <textarea ref={descriptionRef} name='description' cols="50" rows="10" placeholder='Description'/>
                 </p>
                 <p>
-                    <input type='file' name='image' placeholder='select image'/>
+                    <input ref={iconRef} type='file' name='image' placeholder='select image'/>
                 </p>
                 <p>
                     <input type='submit' value='Create community'/>
                 </p>
-            </form> :
+            </form> 
+            :
             <Navigate to='/'/> 
             }
+
         </div>
     )
 }
@@ -182,6 +288,68 @@ function LoginPage(){
                 </p>
                 <p>
                     <input type='password' name='password' placeholder='Enter password'/>
+                </p>
+                <p>
+                    <input type='submit'/>
+                </p>
+            </form>
+            }
+            <div>dont have account yet? <a href='/register'> register</a></div>
+        </div>
+    )
+}
+
+function Register(){
+    let {user} = useContext(AuthContext)
+
+    const profilePictureRef = useRef();
+    const usernameRef = useRef();
+    const passwordRef = useRef();
+    const emailRef = useRef();
+
+    const registerUser = (e) =>{
+        e.preventDefault()
+        console.log(usernameRef.value)
+        console.log(passwordRef.value)
+
+        axios.post('http://127.0.0.1:8000/users/', {
+            username : usernameRef.current.value,
+            password : passwordRef.current.value,
+            email : emailRef.current.value,
+            avatar : profilePictureRef.current.files[0],
+          }, 
+          {
+            headers: {
+                'accept': 'application/json',
+                'Accept-Language': 'en-US,en;q=0.8',
+                'Content-Type': 'multipart/form-data;',
+            }
+          }
+        ).then(function (response) {
+            console.log(response);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+    }
+
+    return (
+        <div id='board' style={{textAlign: 'center'}}>
+            <h1> Login </h1>
+            {user ?
+            <Navigate to='/'/> :
+            <form onSubmit={registerUser}>
+                <p>
+                    <input ref={usernameRef} type='text' name='username' placeholder='Enter username'/>
+                </p>
+                <p>
+                    <input ref={emailRef} type='text' name='email' placeholder='Enter email'/>
+                </p>
+                <p>
+                    <input ref={profilePictureRef} type='file' name='profilePicture' placeholder='select picture'/>
+                </p>
+                <p>
+                    <input ref={passwordRef} type='password' name='password' placeholder='Enter password'/>
                 </p>
                 <p>
                     <input type='submit'/>
@@ -230,6 +398,7 @@ function PostDetails(){
     const {user} = useContext(AuthContext)
     const {token} = useContext(AuthContext)
     const [commentText, setCommentText] = useState('')
+    const [error, setError] = useState('')
 
     // let details = {};
 
@@ -247,7 +416,7 @@ function PostDetails(){
             setComments(res.data);
                 setTimeout(() => {
                     setCommentsLoading(false);
-                    }, 100);
+                    }, 0);
 
             }).catch(err => {
                 setCommentsLoading(false);
@@ -260,6 +429,7 @@ function PostDetails(){
             }).catch(err => {
                 console.error(err)
             })
+        console.log(comments)
     }
 
     const SetCommentText = (e) => {
@@ -267,11 +437,13 @@ function PostDetails(){
         console.log(commentText)
     }
 
-    const addComment = (e) =>{
+    const AddComment = (e) =>{
         e.preventDefault()
-        axios.post(`http://127.0.0.1:8000/posts/${post_id}/add_post_comment/`,
+        axios.post(`http://127.0.0.1:8000/comments/`,
             { 
-                'content' : commentText
+                content : commentText,
+                post : post_id,
+                user : user.user_id
             },
             {
                 headers: {
@@ -284,6 +456,7 @@ function PostDetails(){
             })
             .catch(function (error) {
                 console.error(error.response);
+                setError(error.response.data.content[0])
             });
     }
 
@@ -307,10 +480,11 @@ function PostDetails(){
                     <h3 >Add comment</h3>
                     
                     <div style={{textAlign: 'center', width: '100%'}}>
-                        <textarea onChange={SetCommentText} className='rounded' name="content" rows="4" placeholder='comment content' style={{width: '100%', resize: 'none', display: 'block', boxSizing: 'border-box'}}> </textarea>
+                        <textarea onChange={SetCommentText} className='rounded' name="content" rows="4" style={{width: '100%', resize: 'none', display: 'block', boxSizing: 'border-box'}}> </textarea>
                     </div>
+                    <p style={{color: 'red'}}>{error}</p>
                     
-                        <a onClick={addComment} href=''>
+                        <a onClick={AddComment} href=''>
                             <div  className="button" style={{marginTop: '25px', float: 'left',  marginRight: '10px', padding: '5px 10px', lineHeight: '25px'}}>
                                 <div style={{overflow: 'hidden'}}> add comment </div>
                             {/* <h3 >Add comment</h3> */}
@@ -344,8 +518,16 @@ function Website(){
 
     
             <div style ={{float: 'right'}}>
-                {user ? <a onClick={logoutUser}>logout</a> : <Link to='/login'>login</Link> }
-                {/* <a href=""> logout </a> */}
+                {user ? 
+                    <div> 
+                        <a href='/createPost'> create </a>
+                        <a onClick={logoutUser}>logout</a> 
+                    </div> : 
+                    <div>
+                        <Link to='/login'>login</Link> 
+                    </div>
+                }
+                
             </div>
 
             
@@ -359,7 +541,7 @@ function Website(){
 
             <div id = "groups" className="scrollbox padding_left padding_right"> 
                 <p>
-                    <a href =""> Home </a>
+                    <a href ="/"> Home </a>
                 </p>
                 <p>
                     <a href =""> Popular </a>
@@ -368,7 +550,7 @@ function Website(){
                     <a href =""> Browse communities </a>
                 </p>
                 <p>
-                    <a href =""> create community </a>
+                    <a href ="/addCommunity"> create community </a>
                 </p>
 
                 <hr style={{margin: '0px'}}></hr>
@@ -390,9 +572,9 @@ function Website(){
                 <Route path="/post/:post_id" element={<PostDetails />} />
                 <Route path="/community/:communityid" element={<CommunityBoard />} />
                 <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<Register />} />
                 <Route path="/addCommunity" element={<AddCommunity />} />
-
-
+                <Route path="/createPost" element={<AddPost />} />
             </Routes>
 
         </div>

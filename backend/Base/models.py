@@ -16,6 +16,7 @@ class Community(models.Model):
     icon = models.ImageField(blank=True, null=True, upload_to='images/community_icons/')
     description = models.CharField(max_length=1024, blank=False, default="Description")
     date = models.DateTimeField(default=timezone.now())
+    users = models.ManyToManyField(User, blank=True, related_name='communities')
 
     def __str__(self):
         return "@" + self.name
@@ -46,11 +47,17 @@ class Comment(models.Model):
     content = models.CharField(max_length=1024)
     user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='comments')
     post = models.ForeignKey(Post, on_delete=models.CASCADE, default=None, related_name='comments')
-    date = models.DateTimeField(default=datetime.now())
+    date = models.DateTimeField(default=datetime.now)
+
+    class Meta:
+        ordering = ['-date']
 
     def __str__(self):
         return self.content[0:50]
- #   likes = models.ManyToMany#Field(User, through="Like")
+
+    @property
+    def get_like_count(self):
+        return self.likes.all().count()
 
 
 class PostLike(models.Model):
