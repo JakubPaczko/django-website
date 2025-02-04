@@ -24,12 +24,12 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         return token
 
+
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
+
 class PostViewSet(viewsets.ModelViewSet):
-    permission_classes = (AllowAny,)
-    # serializer_class = PostSerializer
     queryset = Post.objects.all().order_by('-pub_date')
     filterset_class = PostFilter
 
@@ -38,7 +38,20 @@ class PostViewSet(viewsets.ModelViewSet):
             return PostSerializer
         else:
             return PostDetailsSerializer
-        
+
+    def create(self, request, *args, **kwargs):
+        data = request.data.copy()
+        data['author'] = request.user.id
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data,
+            status=status.HTTP_201_CREATED,
+            headers=headers
+        )
+
     @action(detail=True, methods=['get'], permission_classes=[IsAuthenticated])
     def is_liked_by_user(self, request, pk=None):
         post = self.get_object()
@@ -47,9 +60,9 @@ class PostViewSet(viewsets.ModelViewSet):
         postlike = PostLike.objects.filter(post=post, user=user)
 
         if postlike.exists():
-            return Response({'status': True })
+            return Response({'status': True})
         else:
-            return Response({'status': False })
+            return Response({'status': False})
 
     @action(detail=True, methods=['get'])
     def like_count(self, request, pk=None):
@@ -58,29 +71,15 @@ class PostViewSet(viewsets.ModelViewSet):
         return Response({'status': likes.__len__() })
 
 
-
 class CommunityViewSet(viewsets.ModelViewSet):
     serializer_class = CommunitySerializer
     queryset = Community.objects.all().order_by('date')
     filterset_class = CommunityFilter
 
-    # @permission_classes([AllowAny])
-    # def create(self, request):
-    #     serializer = self.serializer_class(data=request.data)
-        
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         print(request.data)
-    #         return Response({'status': 'community added'})
-    #     else:
-    #         return Response({serializer.errors, request.data},
-    #                         status=status.HTTP_400_BAD_REQUEST)
-
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
-    # serializer_class = UserSerializer
-    # serializers = [UserSerializer, UserDetailsSerializer]
+
     def get_serializer_class(self):
         if self.request.method == 'GET':
             return UserSerializer
@@ -92,41 +91,20 @@ class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     queryset = Comment.objects.all().order_by('-date')
     filterset_class = PostCommmentsFilter
-    
-    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
-    def add_like(self, request, pk=None):
-        comment = self.get_object()
-        user = request.user
 
-        data = {
-            'user': user.id,
-            'comment': comment.id,
-        }
-
-        serializer = CommentLikeSerializer(data=data)
-
-        if serializer.is_valid():
-            serializer.save()
-            return Response({'status': 'like added'})
-        else:
-            like_obj = CommentLike.objects.filter(comment=comment, user=user)
-            
-            if like_obj.exists():
-                like_obj.delete()
-                return Response({'status': 'like deleted'})
-            
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class CommunityPostsViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
-    
+
     def get_queryset(self):
         community = self.kwargs['community_id']
         return Post.objects.filter(community=community)
 
+
 class PostLikeViewSet(viewsets.ModelViewSet):
     serializer_class = PostLikeSerializer
     queryset = PostLike.objects.all()
+
 
 class CommentLikeViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
