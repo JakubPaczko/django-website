@@ -8,63 +8,60 @@ import {AuthContext, AuthProvider} from '../context/auth';
 
 
 
-class Board extends React.Component{
-    constructor(props) {
-        super(props);
-        this.scrollbox = React.createRef();
-      }
+function Board(){
+    const scrollbox = useRef()
+    const [details, setDetails] = useState()
+    const [scrollPosition, setScrollPosition] = useState({})
+    const [boardOffset, setBoardOffset] = useState({})
+    let {token} = useContext(AuthContext)
 
-    state = {
-        details: [],
-        scroll_position : 0,
-        board_offset : 0,
-    };
+    useEffect(() => {
+        axios.get('http://127.0.0.1:8000/posts/?limit=5&offset=0', {
+            headers:{
+                Authorization : 'Bearer ' + String(token ? token.access : ''),
+            }
+        }).then(res => {
+            // console.log(res.data.results)
+            setDetails(res.data.results)
+        }).catch(err => {
+            console.log(err)
+        })
 
-    componentDidMount(){
-        let data;
-        axios.get('http://127.0.0.1:8000/posts/?limit=5&offset=0').then(res => {
-        data = res.data.results;
-        this.setState({
-            details: data
-        });
-        }).catch(err => {})
-
-        const scrollb = this.scrollbox.current
         const scroll_val = window.sessionStorage.getItem("scroll")
-
         setTimeout(() => {
-            scrollb.scrollTo({ top: scroll_val, behavior: "smooth" });
+            scrollbox.current.scrollTo({ top: scroll_val, behavior: "instant" });
           }, 100);
-    }
+        
+    }, [])
 
-    handleScroll = (e) => {
+    const handleScroll = (e) => {
         const { scrollTop, scrollHeight, clientHeight } = e.target;
 
-        this.state.scroll_position = scrollTop;
+        setScrollPosition(scrollTop)
         window.sessionStorage.setItem("scroll", scrollTop)
     
-        if( scrollTop >= (scrollHeight - clientHeight))
+        if (scrollTop >= (scrollHeight - clientHeight))
         {
-            this.state.board_offset += 5;
-            let data;
+            setBoardOffset(boardOffset+5)
 
-            axios.get('http://127.0.0.1:8000/posts/?limit=5&offset=' + this.state.board_offset).then(res => {
-            data = res.data.results;
-            this.setState({details: [...this.state.details, ...data]})
+            axios.get('http://127.0.0.1:8000/posts/?limit=5&offset=' + boardOffset).then(res => {
+                setDetails([...details, ...res.data.results])
             })
             .catch(err => {
-
+                console.log(err)
             })
         }
     }
 
-    render(){
-        return(
-            <div id = "board" className="scrollbox" ref={this.scrollbox} onScroll={this.handleScroll}>
-                <PostList data={this.state.details}/>
-            </div>
-        )
-    }
+    return(
+        <div id = "board" className="scrollbox" ref={scrollbox} onScroll={handleScroll}>
+            {details ? 
+                <PostList data={details}/>
+                :
+                <div>loading</div>
+            }
+        </div>
+    )
 }
 
 function CommunityBoard(){
@@ -158,7 +155,7 @@ function AddPost(){
         axios.post('http://localhost:8000/posts/',{ 
             title : titleRef.current.value,
             content : contentRef.current.value,
-            author : user.user_id,
+            author : 0,
             community : communityRef.current.value,
             image : imageRef.current.files[0],
         },
@@ -167,7 +164,7 @@ function AddPost(){
                 'accept': 'application/json',
                 'Accept-Language': 'en-US,en;q=0.8',
                 'Content-Type': 'multipart/form-data;',
-                // Authorization : 'Bearer ' + String(token ? token.access : ''),
+                Authorization : 'Bearer ' + String(token ? token.access : ''),
             }
         })
         .then(function (response) {
