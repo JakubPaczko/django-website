@@ -5,9 +5,9 @@ from django.contrib.auth import authenticate, login, logout
 from datetime import datetime
 from Base.forms import CommentForm, PostForm, RegisterForm, CommunityForm
 from Base.models import Post, Comment, User, Community, PostLike, CommentLike
-from Base.filters import PostFilter, PostCommmentsFilter, CommunityFilter
+from Base.filters import PostFilter, PostCommmentsFilter, CommunityFilter, PostLikeFilter
 from Base.serlializers import PostSerializer, CommunitySerializer, UserSerializer, CommentSerializer, PostLikeSerializer, CommentLikeSerializer, UserDetailsSerializer, PostDetailsSerializer
-from rest_framework import viewsets, generics, status
+from rest_framework import viewsets, generics, status, mixins
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -104,6 +104,7 @@ class CommunityPostsViewSet(viewsets.ModelViewSet):
 class PostLikeViewSet(viewsets.ModelViewSet):
     serializer_class = PostLikeSerializer
     queryset = PostLike.objects.all()
+    filterset_class = PostLikeFilter
 
 
 class CommentLikeViewSet(viewsets.ModelViewSet):

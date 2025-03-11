@@ -1,5 +1,5 @@
 import django_filters
-from Base.models import Post, Comment, Community
+from Base.models import Post, Comment, Community, PostLike
 
 
 class PostFilter(django_filters.FilterSet):
@@ -22,10 +22,19 @@ class CommunityFilter(django_filters.FilterSet):
         }
 
 
+class PostLikeFilter(django_filters.FilterSet):
+    class Meta:
+        model = PostLike
+        fields = {
+            'post': ['exact'],
+            'user': ['exact']
+        }
+
+
 class PostCommmentsFilter(django_filters.FilterSet):
     class Meta:
         model = Comment
         fields = {
             'post': ['exact'],
-            'user':['exact'],
+            'user': ['exact'],
         }

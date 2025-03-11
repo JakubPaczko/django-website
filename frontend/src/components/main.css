@@ -1,3 +1,10 @@
+:root {
+  --clr-primary-500: hsl(0, 0%, 28%);
+  --clr-primary-400:hsl(0, 0%, 39%);
+  --clr-primary-300: hsl(0, 0%, 11%);
+  --clr-accent-400: hsl(0, 0%, 100%);
+  --clr-accent-300: hsl(298, 100%, 39%);
+}
 
 .small_image{
     width: 32px;
@@ -13,33 +20,33 @@
 
 
 .light_gray{
-    background-color: rgb(71, 71, 71);
+    background-color: var(--clr-primary-400);
 }
 
 .button{
   border-radius: 12px;
   border: 1px solid;
-  border-color: rgb(100, 100, 100);;
+  border-color: var(--clr-accent-400);
   height: 25px;
   line-height: 25px;
-  background-color: rgb(71, 71, 71);
+  background-color: var(--clr-primary-500);
 }
 
 @keyframes button_animation{
-  from {background-color: rgb(71, 71, 71);}
-  to {background-color: rgb(192, 0, 199);}
+  from {background-color: var(--clr-primary-500);}
+  to {background-color: var(--clr-accent-300);}
 }
 
 .button_clicked{
   border-radius: 12px;
   border: 1px solid;
-  border-color: rgb(100, 100, 100);;
+  border-color: var(--clr-accent-400);
   height: 25px;
   line-height: 25px;
-  background-color: rgb(192, 0, 199);
+  background-color: var(--clr-accent-300);
 
   animation-name: button_animation;
-  animation-duration: 0.2s;
+  animation-duration: 0.5s;
 }
 
 .small_button{
@@ -99,12 +106,17 @@
   transition: opacity 1s;
 }
 
+.post_image{
+  margin-top: 10 px;
+  clear: both;
+}
+
 hr{
-  border: 1px solid rgb(71, 71, 71);
+  border: 1px solid var(--clr-primary-500);
 }
 
 #groups{
-  background-color: rgb(29, 29, 29);
+  background-color: var(--clr-primary-300);
   float: left; 
   width: 12%;
   padding: 10px;
@@ -113,35 +125,33 @@ hr{
 
 #post{
   border-radius: 12px;
-  background-color: rgb(29, 29, 29);
-  border: 1px solid rgb(71, 71, 71);
+  background-color: var(--clr-primary-300);
+  border: 1px solid var(--clr-primary-500);
   padding: 25px;
   margin-bottom: 25px;
   margin-top: 25px;
 }
 
-
-
 a:link {
-  color: rgb(255, 255, 255);
+  color: var(--clr-accent-400);
   background-color: transparent;
   text-decoration: none;
 }
 
 a:visited {
-  color: rgb(255, 255, 255);
+  color: var(--clr-accent-400);
   background-color: transparent;
   text-decoration: none;
 }
 
 a:hover {
-  color: rgb(255, 255, 255);
+  color: var(--clr-accent-400);
   background-color: transparent;
   text-decoration: underline;
 }
 
 a:active {
-  color: rgb(255, 255, 255);
+  color: var(--clr-accent-400);
   background-color: transparent;
   text-decoration: underline;
 }

@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from Base.models import Post, User, Community, Comment, PostLike, CommentLike
+import contextlib
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -50,21 +51,25 @@ class PostDetailsSerializer(serializers.ModelSerializer):
     community = CommunitySerializer()
     like_count = serializers.IntegerField(source='get_like_count')
     comment_count = serializers.IntegerField(source='get_comment_count')
-    is_liked_by_user = serializers.SerializerMethodField()
+    user_like_id = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
         fields = [
             'id', 'title', 'image', 'content', 'author', 'community',
-            'pub_date', 'like_count', 'comment_count', 'is_liked_by_user'
+            'pub_date', 'like_count', 'comment_count', 'user_like_id'
         ]
+        extra_kwargs = {
+            'like_count': {"read_only": True},
+            'comment_count': {"read_only": True},
+            'is_liked_by_user': {"read_only": True},
+            'pub_date': {"read_only": True},
+        }
 
-    def get_is_liked_by_user(self, obj):
+    def get_user_like_id(self, obj):
         request = self.context.get('request')
-        return PostLike.objects.filter(
-            user=request.user.id,
-            post=obj.id
-        ).exists()
+        with contextlib.suppress(PostLike.DoesNotExist):
+            return request.user.likes.get(post=obj.id).id
 
 
 class PostSerializer(serializers.ModelSerializer):
