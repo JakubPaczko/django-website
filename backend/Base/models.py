@@ -44,7 +44,7 @@ class Community(models.Model):
 class Post(models.Model):
     title = models.CharField(max_length=256, blank=False, default="Title")
     content = models.CharField(max_length=1024, blank=False)
-    pub_date = models.DateTimeField(default=datetime.now(), blank=True)
+    pub_date = models.DateTimeField(default=datetime.now, blank=True)
     image = models.ImageField(blank=True, null=True, upload_to='images/')
     author = models.ForeignKey(
         User,
