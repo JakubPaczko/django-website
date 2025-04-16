@@ -46,13 +46,14 @@ class PostViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
+
         return Response(
             serializer.data,
             status=status.HTTP_201_CREATED,
             headers=headers
         )
 
-    @action(detail=True, methods=['get'], permission_classes=[IsAuthenticated])
+    @action(detail=True, methods=['get'], permission_classes=[AllowAny])
     def is_liked_by_user(self, request, pk=None):
         post = self.get_object()
         user = request.user
@@ -64,11 +65,11 @@ class PostViewSet(viewsets.ModelViewSet):
         else:
             return Response({'status': False})
 
-    @action(detail=True, methods=['get'])
+    @action(detail=True, methods=['get'], permission_classes=[AllowAny])
     def like_count(self, request, pk=None):
         post = self.get_object()
         likes = PostLike.objects.filter(post=post)
-        return Response({'status': likes.__len__() })
+        return Response({'status': likes.__len__()})
 
 
 class CommunityViewSet(viewsets.ModelViewSet):

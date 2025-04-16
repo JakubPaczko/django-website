@@ -1,11 +1,11 @@
 import React, {useRef, createRef, useEffect, useState, useContext } from 'react';
 import './main.css'
-import {PostList, Post, CommentList}from './post'
+import {Post, CommentList}from './post'
 import { CommunityList } from './community';
 import axios from 'axios';
 import {Routes, Route, useParams, Form, Link, Links, Navigate} from 'react-router-dom'
 import {AuthContext, AuthProvider} from '../context/auth';
-
+import { PostList } from './posts/postList';
 
 
 function Board(){
@@ -18,7 +18,7 @@ function Board(){
     useEffect(() => {
         axios.get('http://127.0.0.1:8000/posts/?limit=5&offset=0', {
             headers:{
-                Authorization : 'Bearer ' + String(token ? token.access : ''),
+                Authorization : token ? 'Bearer ' + String(token.access) : '',
             }
         }).then(res => {
             // console.log(res.data.results)
@@ -74,8 +74,8 @@ function CommunityBoard(){
     useEffect(() => {
         setLoadingPosts(true)
 
-        axios.get('http://127.0.0.1:8000//posts/?author=&pub_date__lte=&pub_date__gte=&title__icontains=&community=' + communityid + '&?limit=5').then(res => {
-                setPosts(res.data);
+        axios.get(`http://127.0.0.1:8000/posts/?community=${communityid}&limit=5`).then(res => {
+                setPosts(res.data.results);
                 
                 nextPosts = res.data.next;
                 // console.log(nextPosts);

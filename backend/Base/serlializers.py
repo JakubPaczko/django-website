@@ -68,7 +68,7 @@ class PostDetailsSerializer(serializers.ModelSerializer):
 
     def get_user_like_id(self, obj):
         request = self.context.get('request')
-        with contextlib.suppress(PostLike.DoesNotExist):
+        with contextlib.suppress(PostLike.DoesNotExist, AttributeError):
             return request.user.likes.get(post=obj.id).id
 
 
